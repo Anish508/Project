@@ -1,0 +1,29 @@
+com.alumni.connect.app-transition-1.3.0-0 C:\Users\Anish\.gradle\caches\transforms-3\0c78467ba0093aa22be0c9d80ea516ce\transformed\transition-1.3.0\res
+com.alumni.connect.app-viewpager2-1.0.0-1 C:\Users\Anish\.gradle\caches\transforms-3\2ddaf1f12da8c118613d930985fe5f92\transformed\viewpager2-1.0.0\res
+com.alumni.connect.app-swiperefreshlayout-1.1.0-2 C:\Users\Anish\.gradle\caches\transforms-3\315cbd47e408494c6272921e53e5e09d\transformed\swiperefreshlayout-1.1.0\res
+com.alumni.connect.app-coordinatorlayout-1.1.0-3 C:\Users\Anish\.gradle\caches\transforms-3\32c941a3a261d4a55722954517b3f409\transformed\coordinatorlayout-1.1.0\res
+com.alumni.connect.app-cardview-1.0.0-4 C:\Users\Anish\.gradle\caches\transforms-3\47ab4dae8f4577a0d35e59cd24d21777\transformed\cardview-1.0.0\res
+com.alumni.connect.app-fragment-1.3.6-5 C:\Users\Anish\.gradle\caches\transforms-3\4a11e6aca8deda0d389cc913a41ef35f\transformed\fragment-1.3.6\res
+com.alumni.connect.app-navigation-runtime-2.3.5-6 C:\Users\Anish\.gradle\caches\transforms-3\519cda451ae976a689ab03087d95aeaf\transformed\navigation-runtime-2.3.5\res
+com.alumni.connect.app-core-1.5.0-7 C:\Users\Anish\.gradle\caches\transforms-3\5475511f38cb1332de07fc0449a20c22\transformed\core-1.5.0\res
+com.alumni.connect.app-savedstate-1.1.0-8 C:\Users\Anish\.gradle\caches\transforms-3\57e5a0255127586d26d0f377b694fb67\transformed\savedstate-1.1.0\res
+com.alumni.connect.app-lifecycle-viewmodel-2.3.1-9 C:\Users\Anish\.gradle\caches\transforms-3\766e495da83ffc4caa682e6c5b39d6be\transformed\lifecycle-viewmodel-2.3.1\res
+com.alumni.connect.app-drawerlayout-1.1.1-10 C:\Users\Anish\.gradle\caches\transforms-3\7a572ff4edc0378b5d2b48016d96eedc\transformed\drawerlayout-1.1.1\res
+com.alumni.connect.app-appcompat-resources-1.3.1-11 C:\Users\Anish\.gradle\caches\transforms-3\7f0f182f35f8f351d1603d47adbf2f48\transformed\appcompat-resources-1.3.1\res
+com.alumni.connect.app-glide-4.12.0-12 C:\Users\Anish\.gradle\caches\transforms-3\874980e30749ee7efa4a6c4c00406c80\transformed\glide-4.12.0\res
+com.alumni.connect.app-material-1.4.0-13 C:\Users\Anish\.gradle\caches\transforms-3\8c13060a2670605f8d8db671402ed48d\transformed\material-1.4.0\res
+com.alumni.connect.app-circleimageview-3.1.0-14 C:\Users\Anish\.gradle\caches\transforms-3\8dabd74f0b1c161a1239f626011303d7\transformed\circleimageview-3.1.0\res
+com.alumni.connect.app-navigation-ui-2.3.5-15 C:\Users\Anish\.gradle\caches\transforms-3\8f73f1228c9cc15fffa94210850b2ff6\transformed\navigation-ui-2.3.5\res
+com.alumni.connect.app-constraintlayout-2.1.0-16 C:\Users\Anish\.gradle\caches\transforms-3\9c8e12dd3f5b6c8ef44dad92babdd20a\transformed\constraintlayout-2.1.0\res
+com.alumni.connect.app-lifecycle-runtime-2.3.1-17 C:\Users\Anish\.gradle\caches\transforms-3\d68a6aea11a19d6b44348fa1a114d7ab\transformed\lifecycle-runtime-2.3.1\res
+com.alumni.connect.app-recyclerview-1.2.1-18 C:\Users\Anish\.gradle\caches\transforms-3\e11ff89a958fdc3f7e51604163f62d2c\transformed\recyclerview-1.2.1\res
+com.alumni.connect.app-appcompat-1.3.1-19 C:\Users\Anish\.gradle\caches\transforms-3\e380e1acfc6ce19cd2b24b2206723f56\transformed\appcompat-1.3.1\res
+com.alumni.connect.app-navigation-common-2.3.5-20 C:\Users\Anish\.gradle\caches\transforms-3\e8e0faa479afe3bc3e0a350359783a73\transformed\navigation-common-2.3.5\res
+com.alumni.connect.app-navigation-fragment-2.3.5-21 C:\Users\Anish\.gradle\caches\transforms-3\f2821d705a8ee7579a5e83906430ca94\transformed\navigation-fragment-2.3.5\res
+com.alumni.connect.app-pngs-22 D:\Alumni portal\Project\app\build\generated\res\pngs\debug
+com.alumni.connect.app-resValues-23 D:\Alumni portal\Project\app\build\generated\res\resValues\debug
+com.alumni.connect.app-packageDebugResources-24 D:\Alumni portal\Project\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.alumni.connect.app-packageDebugResources-25 D:\Alumni portal\Project\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.alumni.connect.app-merged_res-26 D:\Alumni portal\Project\app\build\intermediates\merged_res\debug
+com.alumni.connect.app-debug-27 D:\Alumni portal\Project\app\src\debug\res
+com.alumni.connect.app-main-28 D:\Alumni portal\Project\app\src\main\res

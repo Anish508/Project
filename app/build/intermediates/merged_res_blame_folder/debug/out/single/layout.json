@@ -1,0 +1,86 @@
+[
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/item_mentorship_request.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/item_mentorship_request.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_login.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_login.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_forgot_password.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_forgot_password.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_directory.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_directory.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_jobs.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_jobs.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_mentorship.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_mentorship.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/nav_header_main.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/nav_header_main.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_profile.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/item_post.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/item_post.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/activity_auth.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/activity_auth.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_admin_dashboard.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_admin_dashboard.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/item_alumni.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/item_alumni.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_alumni_detail.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_alumni_detail.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/item_job.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/item_job.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_edit_profile.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_edit_profile.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_register.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_register.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/item_event.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/item_event.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/activity_splash.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_create_job.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_create_job.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/activity_main.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-mergeDebugResources-25:/layout/fragment_home.xml",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_home.xml"
+    }
+]

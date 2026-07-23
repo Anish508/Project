@@ -1,0 +1,174 @@
+[
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_item_job.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/item_job.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_item_alumni.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/item_alumni.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_mentorship.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_mentorship.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_forgot_password.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_forgot_password.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_activity_main.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_jobs.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_jobs.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_item_mentorship_request.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/item_mentorship_request.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_bg_gradient_header.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/bg_gradient_header.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_bg_rounded_card.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/bg_rounded_card.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_login.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_login.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_bg_chip.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/bg_chip.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_work.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_work.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_admin_dashboard.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_admin_dashboard.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_create_job.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_create_job.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_edit_profile.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_edit_profile.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_directory.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_directory.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_home.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_home.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_nav_header_main.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/nav_header_main.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_search.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_search.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_profile.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_item_event.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/item_event.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/menu_drawer_menu.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/menu/drawer_menu.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_alumni_detail.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_alumni_detail.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_school.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_school.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_home.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_email.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_email.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_register.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_register.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_lock.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_lock.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/navigation_nav_graph.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/navigation/nav_graph.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_activity_splash.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_admin.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_admin.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_item_post.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/item_post.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_mentorship.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_mentorship.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_jobs.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_jobs.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_profile.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_profile.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_event.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_event.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_logout.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_logout.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/menu_bottom_nav_menu.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/menu/bottom_nav_menu.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_fragment_directory.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/fragment_directory.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/layout_activity_auth.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/layout/activity_auth.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/drawable_ic_add.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/drawable/ic_add.xml"
+    },
+    {
+        "merged": "com.alumni.connect.app-merged_res-26:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.alumni.connect.app-main-28:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    }
+]
