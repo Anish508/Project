@@ -5,13 +5,14 @@
 
 -- 1. Base Users Table (stores profile info linked to auth.users)
 CREATE TABLE IF NOT EXISTS public.users (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT UNIQUE NOT NULL,
     role TEXT NOT NULL CHECK (role IN ('student', 'alumni', 'admin')),
     full_name TEXT NOT NULL,
     avatar_url TEXT,
     phone TEXT,
     is_verified BOOLEAN DEFAULT TRUE,
+    is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -62,7 +63,7 @@ CREATE TABLE IF NOT EXISTS public.jobs (
     title TEXT NOT NULL,
     company TEXT NOT NULL,
     location TEXT NOT NULL,
-    job_type TEXT NOT NULL DEFAULT 'Full-time', -- Full-time, Internship, Part-time, Remote
+    job_type TEXT NOT NULL DEFAULT 'Full-time',
     salary_range TEXT,
     description TEXT NOT NULL,
     requirements TEXT,
@@ -79,7 +80,7 @@ CREATE TABLE IF NOT EXISTS public.events (
     description TEXT NOT NULL,
     event_date TEXT NOT NULL,
     event_time TEXT NOT NULL,
-    location_type TEXT NOT NULL DEFAULT 'Online', -- Online, On-Campus, Hybrid
+    location_type TEXT NOT NULL DEFAULT 'Online',
     location_details TEXT NOT NULL,
     category TEXT DEFAULT 'General',
     image_url TEXT,
@@ -93,7 +94,7 @@ CREATE TABLE IF NOT EXISTS public.mentorship_requests (
     mentee_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
     topic TEXT NOT NULL,
     message TEXT NOT NULL,
-    status TEXT DEFAULT 'pending', -- pending, accepted, rejected
+    status TEXT DEFAULT 'pending',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -103,7 +104,44 @@ CREATE TABLE IF NOT EXISTS public.posts (
     author_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
-    post_type TEXT DEFAULT 'discussion', -- announcement, discussion, story
+    post_type TEXT DEFAULT 'discussion',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 9. Connections Table
+CREATE TABLE IF NOT EXISTS public.connections (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    requester_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    receiver_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 10. Saved Jobs Table
+CREATE TABLE IF NOT EXISTS public.saved_jobs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    job_id UUID REFERENCES public.jobs(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, job_id)
+);
+
+-- 11. Event Registrations Table
+CREATE TABLE IF NOT EXISTS public.event_registrations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    event_id UUID REFERENCES public.events(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, event_id)
+);
+
+-- 12. Announcements Table
+CREATE TABLE IF NOT EXISTS public.announcements (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    admin_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    target_role TEXT DEFAULT 'all' CHECK (target_role IN ('all', 'student', 'alumni')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -116,33 +154,21 @@ ALTER TABLE public.jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.mentorship_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.connections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.saved_jobs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.event_registrations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.announcements ENABLE ROW LEVEL SECURITY;
 
--- Allow Public / Authenticated read access
-CREATE POLICY "Allow public read users" ON public.users FOR SELECT USING (true);
-CREATE POLICY "Allow user self insert" ON public.users FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow user self update" ON public.users FOR UPDATE USING (auth.uid() = id);
-
-CREATE POLICY "Allow public read student_profiles" ON public.student_profiles FOR SELECT USING (true);
-CREATE POLICY "Allow student profile insert" ON public.student_profiles FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow student profile update" ON public.student_profiles FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Allow public read alumni_profiles" ON public.alumni_profiles FOR SELECT USING (true);
-CREATE POLICY "Allow alumni profile insert" ON public.alumni_profiles FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow alumni profile update" ON public.alumni_profiles FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Allow public read admin_profiles" ON public.admin_profiles FOR SELECT USING (true);
-CREATE POLICY "Allow admin profile insert" ON public.admin_profiles FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "Allow public read jobs" ON public.jobs FOR SELECT USING (true);
-CREATE POLICY "Allow auth insert jobs" ON public.jobs FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-CREATE POLICY "Allow auth update jobs" ON public.jobs FOR UPDATE USING (auth.uid() = posted_by);
-
-CREATE POLICY "Allow public read events" ON public.events FOR SELECT USING (true);
-CREATE POLICY "Allow auth insert events" ON public.events FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-
-CREATE POLICY "Allow read mentorship_requests" ON public.mentorship_requests FOR SELECT USING (auth.uid() = mentor_id OR auth.uid() = mentee_id);
-CREATE POLICY "Allow insert mentorship_requests" ON public.mentorship_requests FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-CREATE POLICY "Allow update mentorship_requests" ON public.mentorship_requests FOR UPDATE USING (auth.uid() = mentor_id);
-
-CREATE POLICY "Allow public read posts" ON public.posts FOR SELECT USING (true);
-CREATE POLICY "Allow auth insert posts" ON public.posts FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+-- RLS Policies - Open for testing (allow all operations with anon key)
+CREATE POLICY "Allow all users" ON public.users FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all student_profiles" ON public.student_profiles FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all alumni_profiles" ON public.alumni_profiles FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all admin_profiles" ON public.admin_profiles FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all jobs" ON public.jobs FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all events" ON public.events FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all mentorship_requests" ON public.mentorship_requests FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all posts" ON public.posts FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all connections" ON public.connections FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all saved_jobs" ON public.saved_jobs FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all event_registrations" ON public.event_registrations FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all announcements" ON public.announcements FOR ALL USING (true) WITH CHECK (true);

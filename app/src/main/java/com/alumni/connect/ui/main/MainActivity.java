@@ -35,6 +35,15 @@ public class MainActivity extends AppCompatActivity {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.navHostFragment);
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
+            if (Constants.ROLE_ADMIN.equals(sessionManager.getRole())) {
+                navController.setGraph(R.navigation.nav_graph_admin);
+                binding.bottomNav.getMenu().clear();
+                binding.bottomNav.inflateMenu(R.menu.bottom_nav_admin);
+            } else {
+                navController.setGraph(R.navigation.nav_graph);
+                binding.bottomNav.getMenu().clear();
+                binding.bottomNav.inflateMenu(R.menu.bottom_nav_menu);
+            }
             NavigationUI.setupWithNavController(binding.bottomNav, navController);
             NavigationUI.setupWithNavController(binding.navigationView, navController);
         }
@@ -57,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Hide admin tab for non-admin users if desired or keep accessible
-        if (!Constants.ROLE_ADMIN.equals(sessionManager.getRole())) {
-            binding.navigationView.getMenu().findItem(R.id.nav_admin).setVisible(false);
+        if (binding.navigationView.getMenu().findItem(R.id.nav_admin) != null) {
+            binding.navigationView.getMenu().findItem(R.id.nav_admin).setVisible(Constants.ROLE_ADMIN.equals(sessionManager.getRole()));
         }
 
         binding.navigationView.setNavigationItemSelectedListener(item -> {

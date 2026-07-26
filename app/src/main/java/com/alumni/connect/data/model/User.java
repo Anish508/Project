@@ -24,6 +24,9 @@ public class User {
     @SerializedName("is_verified")
     private boolean isVerified = true;
 
+    @SerializedName("is_active")
+    private boolean isActive = true;
+
     @SerializedName("created_at")
     private String createdAt;
 
@@ -57,6 +60,9 @@ public class User {
 
     public boolean isVerified() { return isVerified; }
     public void setVerified(boolean verified) { isVerified = verified; }
+
+    public boolean isActive() { return isActive; }
+    public void setActive(boolean active) { isActive = active; }
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
