@@ -34,19 +34,20 @@ public class RegisterFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
+        boolean isAlumni = binding.rbAlumni.isChecked();
+        binding.tilCompany.setVisibility(isAlumni ? View.VISIBLE : View.GONE);
+        binding.tilDesignation.setVisibility(isAlumni ? View.VISIBLE : View.GONE);
+        binding.tilYear.setHint(isAlumni ? "Graduation Year (e.g. 2021)" : "Batch Year (e.g. 2025)");
+
         binding.rgRole.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.rbStudent) {
-                binding.tilCompany.setVisibility(View.GONE);
-                binding.tilDesignation.setVisibility(View.GONE);
-                binding.tilYear.setHint("Batch Year (e.g. 2025)");
-            } else if (checkedId == R.id.rbAlumni) {
+            if (checkedId == R.id.rbAlumni) {
                 binding.tilCompany.setVisibility(View.VISIBLE);
                 binding.tilDesignation.setVisibility(View.VISIBLE);
                 binding.tilYear.setHint("Graduation Year (e.g. 2021)");
             } else {
                 binding.tilCompany.setVisibility(View.GONE);
                 binding.tilDesignation.setVisibility(View.GONE);
-                binding.tilYear.setHint("Year of Joining");
+                binding.tilYear.setHint("Batch Year (e.g. 2025)");
             }
         });
 
@@ -74,12 +75,7 @@ public class RegisterFragment extends Fragment {
             year = Integer.parseInt(yearStr);
         } catch (Exception ignored) {}
 
-        String role = Constants.ROLE_STUDENT;
-        if (binding.rbAlumni.isChecked()) {
-            role = Constants.ROLE_ALUMNI;
-        } else if (binding.rbAdmin.isChecked()) {
-            role = Constants.ROLE_ADMIN;
-        }
+        String role = binding.rbAlumni.isChecked() ? Constants.ROLE_ALUMNI : Constants.ROLE_STUDENT;
 
         viewModel.register(email, password, fullName, role, department, year, company, designation)
                 .observe(getViewLifecycleOwner(), resource -> {

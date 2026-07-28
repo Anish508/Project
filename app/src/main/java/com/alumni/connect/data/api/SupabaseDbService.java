@@ -7,6 +7,7 @@ import com.alumni.connect.data.model.Connection;
 import com.alumni.connect.data.model.Event;
 import com.alumni.connect.data.model.EventRegistration;
 import com.alumni.connect.data.model.Job;
+import com.alumni.connect.data.model.JobApplication;
 import com.alumni.connect.data.model.MentorshipRequest;
 import com.alumni.connect.data.model.Post;
 import com.alumni.connect.data.model.SavedJob;
@@ -51,6 +52,9 @@ public interface SupabaseDbService {
     // ==================== STUDENT PROFILES ====================
     @POST("rest/v1/student_profiles")
     Call<List<StudentProfile>> createStudentProfile(@Body StudentProfile profile);
+
+    @GET("rest/v1/student_profiles?select=*,users(*)")
+    Call<List<StudentProfile>> getAllStudentProfiles();
 
     @GET("rest/v1/student_profiles")
     Call<List<StudentProfile>> getStudentProfile(@Query("user_id") String userIdQuery);
@@ -111,6 +115,9 @@ public interface SupabaseDbService {
     Call<Void> deleteEvent(@Query("id") String idQuery);
 
     // ==================== MENTORSHIP REQUESTS ====================
+    @GET("rest/v1/mentorship_requests?select=*,mentor:mentor_id(*),mentee:mentee_id(*)&order=created_at.desc")
+    Call<List<MentorshipRequest>> getMentorshipRequestsForUserOrMentee(@Query("or") String orQuery);
+
     @GET("rest/v1/mentorship_requests?order=created_at.desc")
     Call<List<MentorshipRequest>> getMentorshipRequestsForUser(@Query("mentor_id") String mentorIdQuery);
 
@@ -175,4 +182,21 @@ public interface SupabaseDbService {
 
     @DELETE("rest/v1/announcements")
     Call<Void> deleteAnnouncement(@Query("id") String idQuery);
+
+    // ==================== JOB APPLICATIONS ====================
+    @POST("rest/v1/job_applications")
+    Call<List<JobApplication>> createJobApplication(@Body JobApplication application);
+
+    @GET("rest/v1/job_applications?order=created_at.desc")
+    Call<List<JobApplication>> getJobApplicationsByJobId(@Query("job_id") String jobIdQuery);
+
+    @GET("rest/v1/job_applications?order=created_at.desc")
+    Call<List<JobApplication>> getJobApplicationsByPoster(@Query("posted_by") String postedByQuery);
+
+    @GET("rest/v1/job_applications?order=created_at.desc")
+    Call<List<JobApplication>> getAllJobApplications();
+
+    @DELETE("rest/v1/job_applications")
+    Call<Void> deleteJobApplication(@Query("id") String idQuery);
 }
+

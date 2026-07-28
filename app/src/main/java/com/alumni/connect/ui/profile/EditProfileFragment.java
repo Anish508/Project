@@ -1,11 +1,14 @@
 package com.alumni.connect.ui.profile;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,6 +26,17 @@ public class EditProfileFragment extends Fragment {
     private FragmentEditProfileBinding binding;
     private ProfileViewModel viewModel;
     private SessionManager sessionManager;
+    private String selectedImageUriStr = "";
+
+    private final ActivityResultLauncher<String> imagePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    selectedImageUriStr = uri.toString();
+                    binding.civEditAvatar.setImageURI(uri);
+                    binding.etAvatarUrl.setText(selectedImageUriStr);
+                    Toast.makeText(requireContext(), "Profile photo selected!", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     @Nullable
     @Override
@@ -39,32 +53,54 @@ public class EditProfileFragment extends Fragment {
 
         binding.etFullName.setText(sessionManager.getFullName());
 
+        binding.btnSelectImage.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
+
         binding.btnSaveProfile.setOnClickListener(v -> saveProfile());
     }
 
     private void saveProfile() {
         String fullName = binding.etFullName.getText() != null ? binding.etFullName.getText().toString().trim() : "";
         String phone = binding.etPhone.getText() != null ? binding.etPhone.getText().toString().trim() : "";
+        String avatarUrl = binding.etAvatarUrl.getText() != null ? binding.etAvatarUrl.getText().toString().trim() : "";
+        String company = binding.etCompany.getText() != null ? binding.etCompany.getText().toString().trim() : "";
+        String designation = binding.etDesignation.getText() != null ? binding.etDesignation.getText().toString().trim() : "";
+        String bio = binding.etBio.getText() != null ? binding.etBio.getText().toString().trim() : "";
+
+        if (avatarUrl.isEmpty() && !selectedImageUriStr.isEmpty()) {
+            avatarUrl = selectedImageUriStr;
+        }
 
         if (fullName.isEmpty()) {
             Toast.makeText(requireContext(), "Full name cannot be empty", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("full_name", fullName);
-        updates.put("phone", phone);
+        Map<String, Object> userUpdates = new HashMap<>();
+        userUpdates.put("full_name", fullName);
+        userUpdates.put("phone", phone);
+        if (!avatarUrl.isEmpty()) {
+            userUpdates.put("avatar_url", avatarUrl);
+        }
 
-        viewModel.updateProfile(sessionManager.getUserId(), updates).observe(getViewLifecycleOwner(), resource -> {
-            if (resource.status == Resource.Status.SUCCESS) {
-                sessionManager.saveSession(sessionManager.getUserId(), sessionManager.getEmail(), sessionManager.getRole(), fullName, sessionManager.getAccessToken());
-                Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(requireView()).popBackStack();
-            } else if (resource.status == Resource.Status.ERROR) {
-                sessionManager.saveSession(sessionManager.getUserId(), sessionManager.getEmail(), sessionManager.getRole(), fullName, sessionManager.getAccessToken());
-                Toast.makeText(requireContext(), "Profile changes saved!", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(requireView()).popBackStack();
+        viewModel.updateProfile(sessionManager.getUserId(), userUpdates).observe(getViewLifecycleOwner(), resource -> {
+            sessionManager.saveSession(sessionManager.getUserId(), sessionManager.getEmail(), sessionManager.getRole(), fullName, sessionManager.getAccessToken());
+            
+            // Save role specific profile fields
+            String role = sessionManager.getRole();
+            if (com.alumni.connect.util.Constants.ROLE_ALUMNI.equals(role)) {
+                Map<String, Object> alumniUpdates = new HashMap<>();
+                if (!company.isEmpty()) alumniUpdates.put("current_company", company);
+                if (!designation.isEmpty()) alumniUpdates.put("designation", designation);
+                if (!bio.isEmpty()) alumniUpdates.put("bio", bio);
+                viewModel.updateAlumniProfileDetails(sessionManager.getUserId(), alumniUpdates);
+            } else if (com.alumni.connect.util.Constants.ROLE_STUDENT.equals(role)) {
+                Map<String, Object> studentUpdates = new HashMap<>();
+                if (!bio.isEmpty()) studentUpdates.put("bio", bio);
+                viewModel.updateStudentProfileDetails(sessionManager.getUserId(), studentUpdates);
             }
+
+            Toast.makeText(requireContext(), "Profile photo & information updated successfully!", Toast.LENGTH_SHORT).show();
+            Navigation.findNavController(requireView()).popBackStack();
         });
     }
 

@@ -61,7 +61,23 @@ public class JobsFragment extends Fragment {
         }
 
         binding.fabPostJob.setOnClickListener(v -> {
-            Navigation.findNavController(requireView()).navigate(R.id.action_jobs_to_create);
+            // Check verification if Alumni
+            if (Constants.ROLE_ALUMNI.equals(sessionManager.getRole())) {
+                // Fetch profile to verify is_verified status
+                com.alumni.connect.data.repository.ProfileRepository profileRepo = new com.alumni.connect.data.repository.ProfileRepository(requireContext());
+                profileRepo.getAlumniProfileByUserId(sessionManager.getUserId()).observe(getViewLifecycleOwner(), res -> {
+                    if (res != null && res.data != null && !res.data.isEmpty()) {
+                        com.alumni.connect.data.model.AlumniProfile profile = res.data.get(0);
+                        if (profile.getUser() != null && !profile.getUser().isVerified()) {
+                            Toast.makeText(requireContext(), "Your alumni account is pending verification by the Admin. Posting jobs requires verification.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                    Navigation.findNavController(requireView()).navigate(R.id.action_jobs_to_create);
+                });
+            } else {
+                Navigation.findNavController(requireView()).navigate(R.id.action_jobs_to_create);
+            }
         });
 
         binding.etJobSearch.addTextChangedListener(new TextWatcher() {
@@ -76,45 +92,68 @@ public class JobsFragment extends Fragment {
     }
 
     private void loadJobs() {
+        boolean canViewApps = Constants.ROLE_ADMIN.equals(sessionManager.getRole()) || Constants.ROLE_ALUMNI.equals(sessionManager.getRole());
         viewModel.getJobs().observe(getViewLifecycleOwner(), resource -> {
             binding.swipeRefresh.setRefreshing(resource.status == Resource.Status.LOADING);
             if (resource.status == Resource.Status.SUCCESS && resource.data != null && !resource.data.isEmpty()) {
-                allJobs = resource.data;
-                adapter.setJobs(allJobs, this::handleApply);
+                allJobs = filterJobsByAudience(resource.data);
+                adapter.setJobs(allJobs, canViewApps, createJobClickListener());
             } else if (resource.status == Resource.Status.ERROR || allJobs.isEmpty()) {
-                allJobs = createMockJobs();
-                adapter.setJobs(allJobs, this::handleApply);
+                allJobs = filterJobsByAudience(createMockJobs());
+                adapter.setJobs(allJobs, canViewApps, createJobClickListener());
             }
         });
     }
 
-    private void handleApply(Job job) {
-        String email = job.getApplicationEmail() != null ? job.getApplicationEmail() : "careers@" + job.getCompany().toLowerCase().replaceAll(" ", "") + ".com";
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:" + email));
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Application for " + job.getTitle() + " - Alumni Portal");
-        try {
-            startActivity(intent);
-        } catch (Exception e) {
-            Toast.makeText(requireContext(), "Opening mail client for " + email, Toast.LENGTH_SHORT).show();
+    private List<Job> filterJobsByAudience(List<Job> jobs) {
+        String role = sessionManager.getRole();
+        if (Constants.ROLE_ADMIN.equals(role)) {
+            return jobs; // Admin sees all jobs
         }
+        List<Job> audienceFiltered = new ArrayList<>();
+        for (Job j : jobs) {
+            String target = j.getTargetAudience() != null ? j.getTargetAudience().toLowerCase() : "all";
+            if ("all".equals(target) || role.equalsIgnoreCase(target)) {
+                audienceFiltered.add(j);
+            }
+        }
+        return audienceFiltered;
+    }
+
+    private JobAdapter.OnJobClickListener createJobClickListener() {
+        return new JobAdapter.OnJobClickListener() {
+            @Override
+            public void onApply(Job job) {
+                ApplyJobDialogFragment.newInstance(job).show(getChildFragmentManager(), "ApplyJobDialog");
+            }
+
+            @Override
+            public void onViewApplications(Job job) {
+                ViewApplicationsDialogFragment.newInstance(job).show(getChildFragmentManager(), "ViewApplicationsDialog");
+            }
+        };
     }
 
     private void filterJobs(String query) {
+        boolean canViewApps = Constants.ROLE_ADMIN.equals(sessionManager.getRole()) || Constants.ROLE_ALUMNI.equals(sessionManager.getRole());
+        List<Job> audienceJobs = filterJobsByAudience(allJobs);
+
         if (query == null || query.trim().isEmpty()) {
-            adapter.setJobs(allJobs, this::handleApply);
+            adapter.setJobs(audienceJobs, canViewApps, createJobClickListener());
             return;
         }
         String lower = query.toLowerCase();
         List<Job> filtered = new ArrayList<>();
-        for (Job j : allJobs) {
+        for (Job j : audienceJobs) {
             if ((j.getTitle() != null && j.getTitle().toLowerCase().contains(lower)) ||
                 (j.getCompany() != null && j.getCompany().toLowerCase().contains(lower)) ||
-                (j.getLocation() != null && j.getLocation().toLowerCase().contains(lower))) {
+                (j.getLocation() != null && j.getLocation().toLowerCase().contains(lower)) ||
+                (j.getSkillsRequired() != null && j.getSkillsRequired().toLowerCase().contains(lower)) ||
+                (j.getEligibility() != null && j.getEligibility().toLowerCase().contains(lower))) {
                 filtered.add(j);
             }
         }
-        adapter.setJobs(filtered, this::handleApply);
+        adapter.setJobs(filtered, canViewApps, createJobClickListener());
     }
 
     private List<Job> createMockJobs() {
@@ -127,6 +166,7 @@ public class JobsFragment extends Fragment {
         j1.setSalaryRange("$90,000 - $110,000");
         j1.setDescription("Looking for fresh graduates proficient in Java, MVVM, and REST APIs for Android development.");
         j1.setApplicationEmail("jobs@google.com");
+        j1.setApplicationLink("https://careers.google.com/");
 
         Job j2 = new Job();
         j2.setTitle("Software Engineering Intern");
@@ -136,6 +176,7 @@ public class JobsFragment extends Fragment {
         j2.setSalaryRange("₹60,000 / month");
         j2.setDescription("6-month internship program for final year CS/ECE students. Mentorship provided by senior alumni.");
         j2.setApplicationEmail("careers@microsoft.com");
+        j2.setApplicationLink("https://careers.microsoft.com/");
 
         list.add(j1);
         list.add(j2);

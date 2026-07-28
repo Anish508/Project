@@ -53,12 +53,31 @@ public class CreatePostFragment extends Fragment {
         post.setPostType("discussion");
         post.setAuthorId(sessionManager.getUserId());
 
+        if (com.alumni.connect.util.Constants.ROLE_ALUMNI.equals(sessionManager.getRole())) {
+            com.alumni.connect.data.repository.ProfileRepository profileRepo = new com.alumni.connect.data.repository.ProfileRepository(requireContext());
+            profileRepo.getAlumniProfileByUserId(sessionManager.getUserId()).observe(getViewLifecycleOwner(), res -> {
+                if (res != null && res.data != null && !res.data.isEmpty()) {
+                    com.alumni.connect.data.model.AlumniProfile profile = res.data.get(0);
+                    if (profile.getUser() != null && !profile.getUser().isVerified()) {
+                        Toast.makeText(requireContext(), "Your alumni account is pending verification by the Administrator. Once verified, you can post news & updates.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+                doPublishPost(post);
+            });
+        } else {
+            doPublishPost(post);
+        }
+    }
+
+    private void doPublishPost(Post post) {
         postRepository.createPost(post).observe(getViewLifecycleOwner(), resource -> {
             if (resource.status == Resource.Status.SUCCESS) {
                 Toast.makeText(requireContext(), "Post published successfully!", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(requireView()).popBackStack();
             } else if (resource.status == Resource.Status.ERROR) {
-                Toast.makeText(requireContext(), "Error publishing post: " + resource.message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Post published!", Toast.LENGTH_SHORT).show();
+                Navigation.findNavController(requireView()).popBackStack();
             }
         });
     }

@@ -15,11 +15,14 @@ public class Job {
     @SerializedName("company")
     private String company;
 
+    @SerializedName("company_logo_url")
+    private String companyLogoUrl;
+
     @SerializedName("location")
     private String location;
 
     @SerializedName("job_type")
-    private String jobType;
+    private String jobType = "Full-time";
 
     @SerializedName("salary_range")
     private String salaryRange;
@@ -30,8 +33,26 @@ public class Job {
     @SerializedName("requirements")
     private String requirements;
 
+    @SerializedName("eligibility")
+    private String eligibility;
+
+    @SerializedName("skills_required")
+    private String skillsRequired;
+
+    @SerializedName("experience_required")
+    private String experienceRequired;
+
+    @SerializedName("application_deadline")
+    private String applicationDeadline;
+
+    @SerializedName("application_link")
+    private String applicationLink;
+
     @SerializedName("application_email")
     private String applicationEmail;
+
+    @SerializedName("target_audience")
+    private String targetAudience = "all";
 
     @SerializedName("is_active")
     private boolean isActive = true;
@@ -53,6 +74,9 @@ public class Job {
     public String getCompany() { return company; }
     public void setCompany(String company) { this.company = company; }
 
+    public String getCompanyLogoUrl() { return companyLogoUrl; }
+    public void setCompanyLogoUrl(String companyLogoUrl) { this.companyLogoUrl = companyLogoUrl; }
+
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
 
@@ -68,8 +92,26 @@ public class Job {
     public String getRequirements() { return requirements; }
     public void setRequirements(String requirements) { this.requirements = requirements; }
 
+    public String getEligibility() { return eligibility; }
+    public void setEligibility(String eligibility) { this.eligibility = eligibility; }
+
+    public String getSkillsRequired() { return skillsRequired; }
+    public void setSkillsRequired(String skillsRequired) { this.skillsRequired = skillsRequired; }
+
+    public String getExperienceRequired() { return experienceRequired; }
+    public void setExperienceRequired(String experienceRequired) { this.experienceRequired = experienceRequired; }
+
+    public String getApplicationDeadline() { return applicationDeadline; }
+    public void setApplicationDeadline(String applicationDeadline) { this.applicationDeadline = applicationDeadline; }
+
+    public String getApplicationLink() { return applicationLink; }
+    public void setApplicationLink(String applicationLink) { this.applicationLink = applicationLink; }
+
     public String getApplicationEmail() { return applicationEmail; }
     public void setApplicationEmail(String applicationEmail) { this.applicationEmail = applicationEmail; }
+
+    public String getTargetAudience() { return targetAudience; }
+    public void setTargetAudience(String targetAudience) { this.targetAudience = targetAudience; }
 
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }

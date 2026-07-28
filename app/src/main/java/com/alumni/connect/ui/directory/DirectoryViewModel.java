@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.alumni.connect.data.model.AlumniProfile;
+import com.alumni.connect.data.model.StudentProfile;
 import com.alumni.connect.data.repository.ProfileRepository;
 import com.alumni.connect.util.Resource;
 
@@ -22,5 +23,9 @@ public class DirectoryViewModel extends AndroidViewModel {
 
     public LiveData<Resource<List<AlumniProfile>>> getAlumniProfiles() {
         return profileRepository.getAllAlumniProfiles();
+    }
+
+    public LiveData<Resource<List<StudentProfile>>> getStudentProfiles() {
+        return profileRepository.getAllStudentProfiles();
     }
 }

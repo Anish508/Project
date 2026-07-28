@@ -40,6 +40,10 @@ public class AdminHomeFragment extends Fragment {
             Navigation.findNavController(requireView()).navigate(R.id.nav_content_moderation)
         );
 
+        binding.btnCreateJob.setOnClickListener(v -> 
+            Navigation.findNavController(requireView()).navigate(R.id.nav_create_job)
+        );
+
         binding.btnSendAnnouncement.setOnClickListener(v -> 
             Navigation.findNavController(requireView()).navigate(R.id.nav_announcement)
         );

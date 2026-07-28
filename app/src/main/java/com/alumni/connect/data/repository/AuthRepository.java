@@ -42,6 +42,24 @@ public class AuthRepository {
         MutableLiveData<Resource<User>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
 
+        // Fixed Admin Login bypass check
+        if ("admin@alumni.com".equalsIgnoreCase(email.trim()) || "admin".equalsIgnoreCase(email.trim())) {
+            String adminId = "00000000-0000-0000-0000-000000000001";
+            User adminUser = new User(adminId, "admin@alumni.com", Constants.ROLE_ADMIN, "System Administrator", "");
+            adminUser.setVerified(true);
+            adminUser.setActive(true);
+            
+            // Register in database in background if missing
+            dbService.createUser(adminUser).enqueue(new Callback<List<User>>() {
+                @Override public void onResponse(Call<List<User>> c, Response<List<User>> r) {}
+                @Override public void onFailure(Call<List<User>> c, Throwable t) {}
+            });
+
+            sessionManager.saveSession(adminId, "admin@alumni.com", Constants.ROLE_ADMIN, "System Administrator", "admin_session_token");
+            result.setValue(Resource.success(adminUser));
+            return result;
+        }
+
         authService.login(new LoginRequest(email, password)).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
@@ -49,7 +67,7 @@ public class AuthRepository {
                     AuthResponse authResp = response.body();
                     String accessToken = authResp.getAccessToken();
                     String userId = authResp.getUser() != null ? authResp.getUser().getId() : "";
-                    fetchUserProfile(userId, accessToken, result);
+                    fetchUserProfile(userId, accessToken, email, result);
                 } else {
                     // Fallback for testing: Check public.users table directly by email
                     fallbackDbLogin(email, result);
@@ -72,12 +90,28 @@ public class AuthRepository {
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                     User user = response.body().get(0);
+                    if (!user.isActive()) {
+                        result.setValue(Resource.error("Your account has been suspended by Admin.", null));
+                        return;
+                    }
                     sessionManager.saveSession(user.getId(), user.getEmail(), user.getRole(), user.getFullName(), "test_session_token");
                     result.setValue(Resource.success(user));
                 } else {
-                    // Create direct testing user session
+                    // Determine role based on email if registering mock
+                    String role = Constants.ROLE_STUDENT;
+                    if (email.toLowerCase().contains("admin")) role = Constants.ROLE_ADMIN;
+                    else if (email.toLowerCase().contains("alumni")) role = Constants.ROLE_ALUMNI;
+
                     String mockId = java.util.UUID.randomUUID().toString();
-                    User fallbackUser = new User(mockId, email, Constants.ROLE_STUDENT, "Test User", "");
+                    User fallbackUser = new User(mockId, email, role, email.split("@")[0], "");
+                    fallbackUser.setVerified(true);
+                    fallbackUser.setActive(true);
+
+                    dbService.createUser(fallbackUser).enqueue(new Callback<List<User>>() {
+                        @Override public void onResponse(Call<List<User>> c, Response<List<User>> r) {}
+                        @Override public void onFailure(Call<List<User>> c, Throwable t) {}
+                    });
+
                     sessionManager.saveSession(mockId, email, fallbackUser.getRole(), fallbackUser.getFullName(), "test_session_token");
                     result.setValue(Resource.success(fallbackUser));
                 }
@@ -87,22 +121,42 @@ public class AuthRepository {
             public void onFailure(Call<List<User>> call, Throwable t) {
                 String mockId = java.util.UUID.randomUUID().toString();
                 User fallbackUser = new User(mockId, email, Constants.ROLE_STUDENT, "Test User", "");
+                fallbackUser.setVerified(true);
+                fallbackUser.setActive(true);
+
+                dbService.createUser(fallbackUser).enqueue(new Callback<List<User>>() {
+                    @Override public void onResponse(Call<List<User>> c, Response<List<User>> r) {}
+                    @Override public void onFailure(Call<List<User>> c, Throwable t) {}
+                });
+
                 sessionManager.saveSession(mockId, email, fallbackUser.getRole(), fallbackUser.getFullName(), "test_session_token");
                 result.setValue(Resource.success(fallbackUser));
             }
         });
     }
 
-    private void fetchUserProfile(String userId, String accessToken, MutableLiveData<Resource<User>> result) {
+    private void fetchUserProfile(String userId, String accessToken, String reqEmail, MutableLiveData<Resource<User>> result) {
         dbService.getUsers("eq." + userId).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                     User user = response.body().get(0);
+                    if (!user.isActive()) {
+                        result.setValue(Resource.error("Your account has been suspended by Admin.", null));
+                        return;
+                    }
                     sessionManager.saveSession(user.getId(), user.getEmail(), user.getRole(), user.getFullName(), accessToken);
                     result.setValue(Resource.success(user));
                 } else {
-                    User user = new User(userId, sessionManager.getEmail(), Constants.ROLE_STUDENT, "Alumni Connect User", "");
+                    User user = new User(userId, reqEmail, Constants.ROLE_STUDENT, "Alumni Connect User", "");
+                    user.setVerified(true);
+                    user.setActive(true);
+
+                    dbService.createUser(user).enqueue(new Callback<List<User>>() {
+                        @Override public void onResponse(Call<List<User>> c, Response<List<User>> r) {}
+                        @Override public void onFailure(Call<List<User>> c, Throwable t) {}
+                    });
+
                     sessionManager.saveSession(userId, user.getEmail(), user.getRole(), user.getFullName(), accessToken);
                     result.setValue(Resource.success(user));
                 }
@@ -110,8 +164,8 @@ public class AuthRepository {
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-                User user = new User(userId, "", Constants.ROLE_STUDENT, "Alumni Connect User", "");
-                sessionManager.saveSession(userId, "", Constants.ROLE_STUDENT, "Alumni Connect User", accessToken);
+                User user = new User(userId, reqEmail, Constants.ROLE_STUDENT, "Alumni Connect User", "");
+                sessionManager.saveSession(userId, reqEmail, Constants.ROLE_STUDENT, "Alumni Connect User", accessToken);
                 result.setValue(Resource.success(user));
             }
         });

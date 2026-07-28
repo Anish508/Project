@@ -78,32 +78,64 @@ public class MentorshipFragment extends Fragment {
         viewModel.getMentorshipRequests(sessionManager.getUserId()).observe(getViewLifecycleOwner(), resource -> {
             binding.swipeRefresh.setRefreshing(resource.status == Resource.Status.LOADING);
             if (resource.status == Resource.Status.SUCCESS && resource.data != null && !resource.data.isEmpty()) {
-                mentorshipAdapter.setRequests(resource.data, new MentorshipAdapter.OnMentorshipActionListener() {
-                    @Override
-                    public void onAccept(MentorshipRequest request) {
-                        updateStatus(request.getId(), "accepted");
-                    }
-
-                    @Override
-                    public void onReject(MentorshipRequest request) {
-                        updateStatus(request.getId(), "rejected");
-                    }
-                });
-            } else if (resource.status == Resource.Status.ERROR) {
+                mentorshipAdapter.setRequests(resource.data, createMentorshipListener());
+            } else if (resource.status == Resource.Status.ERROR || resource.data == null || resource.data.isEmpty()) {
                 List<MentorshipRequest> mock = createMockRequests();
-                mentorshipAdapter.setRequests(mock, new MentorshipAdapter.OnMentorshipActionListener() {
-                    @Override
-                    public void onAccept(MentorshipRequest request) {
-                        Toast.makeText(requireContext(), "Request Accepted", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onReject(MentorshipRequest request) {
-                        Toast.makeText(requireContext(), "Request Declined", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                mentorshipAdapter.setRequests(mock, createMentorshipListener());
             }
         });
+    }
+
+    private MentorshipAdapter.OnMentorshipActionListener createMentorshipListener() {
+        return new MentorshipAdapter.OnMentorshipActionListener() {
+            @Override
+            public void onAccept(MentorshipRequest request) {
+                updateStatus(request.getId(), "accepted");
+            }
+
+            @Override
+            public void onReject(MentorshipRequest request) {
+                updateStatus(request.getId(), "rejected");
+            }
+
+            @Override
+            public void onConnect(MentorshipRequest request) {
+                String targetEmail = "";
+                String targetName = "Member";
+
+                if (request.getMentor() != null && !sessionManager.getUserId().equals(request.getMentorId())) {
+                    targetEmail = request.getMentor().getEmail();
+                    targetName = request.getMentor().getFullName();
+                } else if (request.getMentee() != null) {
+                    targetEmail = request.getMentee().getEmail();
+                    targetName = request.getMentee().getFullName();
+                }
+
+                if (targetEmail == null || targetEmail.isEmpty()) {
+                    targetEmail = "mentor@alumni.edu";
+                }
+
+                final String finalEmail = targetEmail;
+                final String finalName = targetName;
+
+                new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                        .setTitle("Connect with " + finalName)
+                        .setMessage("Start your 1-on-1 mentorship session.\nEmail: " + finalEmail + "\nTopic: " + request.getTopic())
+                        .setPositiveButton("Send Email", (dialog, which) -> {
+                            android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_SENDTO);
+                            intent.setData(android.net.Uri.parse("mailto:" + finalEmail));
+                            intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Mentorship Session: " + request.getTopic());
+                            intent.putExtra(android.content.Intent.EXTRA_TEXT, "Hi " + finalName + ",\n\nI am reaching out regarding our mentorship session on '" + request.getTopic() + "'.");
+                            try {
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                Toast.makeText(requireContext(), "No email application found.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
+        };
     }
 
     private void updateStatus(String requestId, String status) {
@@ -119,21 +151,52 @@ public class MentorshipFragment extends Fragment {
         viewModel.getEvents().observe(getViewLifecycleOwner(), resource -> {
             binding.swipeRefresh.setRefreshing(resource.status == Resource.Status.LOADING);
             if (resource.status == Resource.Status.SUCCESS && resource.data != null && !resource.data.isEmpty()) {
-                eventAdapter.setEvents(resource.data);
+                eventAdapter.setEvents(filterEventsByAudience(resource.data));
             } else if (resource.status == Resource.Status.ERROR) {
-                eventAdapter.setEvents(createMockEvents());
+                eventAdapter.setEvents(filterEventsByAudience(createMockEvents()));
             }
         });
     }
 
+    private List<Event> filterEventsByAudience(List<Event> events) {
+        String role = sessionManager.getRole();
+        if (com.alumni.connect.util.Constants.ROLE_ADMIN.equals(role)) {
+            return events; // Admin sees all events
+        }
+        List<Event> filtered = new ArrayList<>();
+        for (Event e : events) {
+            String target = e.getTargetAudience() != null ? e.getTargetAudience().toLowerCase() : "all";
+            if ("all".equals(target) || role.equalsIgnoreCase(target)) {
+                filtered.add(e);
+            }
+        }
+        return filtered;
+    }
+
     private List<MentorshipRequest> createMockRequests() {
         List<MentorshipRequest> list = new ArrayList<>();
+        
         MentorshipRequest r1 = new MentorshipRequest();
         r1.setId("req-101");
         r1.setTopic("Android Architecture & Supabase Best Practices");
         r1.setMessage("Hi! I am building my final year college project and would appreciate feedback on clean MVVM architecture.");
         r1.setStatus("pending");
+        com.alumni.connect.data.model.User m1 = new com.alumni.connect.data.model.User("m1", "priya@gmail.com", "alumni", "Priya Sharma", "");
+        com.alumni.connect.data.model.User s1 = new com.alumni.connect.data.model.User("s1", "anish@gmail.com", "student", "Anish Kumar", "");
+        r1.setMentor(m1);
+        r1.setMentee(s1);
+
+        MentorshipRequest r2 = new MentorshipRequest();
+        r2.setId("req-102");
+        r2.setTopic("System Design & Tech Interview Preparation");
+        r2.setMessage("Mentorship session accepted! You can connect via email or schedule a 1-on-1 virtual call.");
+        r2.setStatus("accepted");
+        com.alumni.connect.data.model.User m2 = new com.alumni.connect.data.model.User("m2", "rohit@amazon.com", "alumni", "Rohit Verma", "");
+        r2.setMentor(m2);
+        r2.setMentee(s1);
+
         list.add(r1);
+        list.add(r2);
         return list;
     }
 

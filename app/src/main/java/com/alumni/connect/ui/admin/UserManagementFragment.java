@@ -123,30 +123,50 @@ public class UserManagementFragment extends Fragment {
             public void onVerify(User user) {
                 adminRepository.verifyUser(user.getId()).observe(getViewLifecycleOwner(), res -> {
                     if (res.status == Resource.Status.SUCCESS) {
-                        Toast.makeText(requireContext(), "User verified!", Toast.LENGTH_SHORT).show();
-                        loadUsers();
+                        user.setVerified(true);
+                        Toast.makeText(requireContext(), user.getFullName() + " verified!", Toast.LENGTH_SHORT).show();
+                        applyFilters();
                     }
                 });
             }
 
             @Override
             public void onSuspend(User user) {
-                adminRepository.suspendUser(user.getId()).observe(getViewLifecycleOwner(), res -> {
-                    if (res.status == Resource.Status.SUCCESS) {
-                        Toast.makeText(requireContext(), "User suspended!", Toast.LENGTH_SHORT).show();
-                        loadUsers();
-                    }
-                });
+                if (user.isActive()) {
+                    adminRepository.suspendUser(user.getId()).observe(getViewLifecycleOwner(), res -> {
+                        if (res.status == Resource.Status.SUCCESS) {
+                            user.setActive(false);
+                            Toast.makeText(requireContext(), user.getFullName() + " suspended!", Toast.LENGTH_SHORT).show();
+                            applyFilters();
+                        }
+                    });
+                } else {
+                    adminRepository.activateUser(user.getId()).observe(getViewLifecycleOwner(), res -> {
+                        if (res.status == Resource.Status.SUCCESS) {
+                            user.setActive(true);
+                            Toast.makeText(requireContext(), user.getFullName() + " activated!", Toast.LENGTH_SHORT).show();
+                            applyFilters();
+                        }
+                    });
+                }
             }
 
             @Override
             public void onDelete(User user) {
-                adminRepository.deleteUser(user.getId()).observe(getViewLifecycleOwner(), res -> {
-                    if (res.status == Resource.Status.SUCCESS) {
-                        Toast.makeText(requireContext(), "User deleted!", Toast.LENGTH_SHORT).show();
-                        loadUsers();
-                    }
-                });
+                new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                        .setTitle("Delete User")
+                        .setMessage("Are you sure you want to permanently delete " + user.getFullName() + "?")
+                        .setPositiveButton("Delete", (dialog, which) -> {
+                            adminRepository.deleteUser(user.getId()).observe(getViewLifecycleOwner(), res -> {
+                                if (res.status == Resource.Status.SUCCESS) {
+                                    allUsers.remove(user);
+                                    Toast.makeText(requireContext(), "User deleted!", Toast.LENGTH_SHORT).show();
+                                    applyFilters();
+                                }
+                            });
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             }
         });
     }

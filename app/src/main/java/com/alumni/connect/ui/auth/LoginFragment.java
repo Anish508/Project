@@ -53,6 +53,12 @@ public class LoginFragment extends Fragment {
         });
 
         binding.btnConfigSupabase.setOnClickListener(v -> showSupabaseConfigDialog());
+
+        binding.btnQuickAdmin.setOnClickListener(v -> {
+            binding.etEmail.setText("admin@alumni.com");
+            binding.etPassword.setText("admin123");
+            performLogin();
+        });
     }
 
     private void performLogin() {

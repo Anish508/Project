@@ -22,16 +22,25 @@ public class Event {
     private String eventTime;
 
     @SerializedName("location_type")
-    private String locationType;
+    private String locationType = "Online";
 
     @SerializedName("location_details")
     private String locationDetails;
 
     @SerializedName("category")
-    private String category;
+    private String category = "General";
 
     @SerializedName("image_url")
     private String imageUrl;
+
+    @SerializedName("registration_deadline")
+    private String registrationDeadline;
+
+    @SerializedName("target_audience")
+    private String targetAudience = "all";
+
+    @SerializedName("created_at")
+    private String createdAt;
 
     public Event() {}
 
@@ -64,4 +73,13 @@ public class Event {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public String getRegistrationDeadline() { return registrationDeadline; }
+    public void setRegistrationDeadline(String registrationDeadline) { this.registrationDeadline = registrationDeadline; }
+
+    public String getTargetAudience() { return targetAudience; }
+    public void setTargetAudience(String targetAudience) { this.targetAudience = targetAudience; }
+
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }

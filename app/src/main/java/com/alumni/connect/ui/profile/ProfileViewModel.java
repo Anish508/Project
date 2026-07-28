@@ -23,4 +23,12 @@ public class ProfileViewModel extends AndroidViewModel {
     public LiveData<Resource<User>> updateProfile(String userId, Map<String, Object> updates) {
         return profileRepository.updateUserProfile(userId, updates);
     }
+
+    public LiveData<Resource<Boolean>> updateAlumniProfileDetails(String userId, Map<String, Object> updates) {
+        return profileRepository.updateAlumniProfileDetails(userId, updates);
+    }
+
+    public LiveData<Resource<Boolean>> updateStudentProfileDetails(String userId, Map<String, Object> updates) {
+        return profileRepository.updateStudentProfileDetails(userId, updates);
+    }
 }

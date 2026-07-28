@@ -62,12 +62,19 @@ CREATE TABLE IF NOT EXISTS public.jobs (
     posted_by UUID REFERENCES public.users(id) ON DELETE SET NULL,
     title TEXT NOT NULL,
     company TEXT NOT NULL,
+    company_logo_url TEXT,
     location TEXT NOT NULL,
     job_type TEXT NOT NULL DEFAULT 'Full-time',
     salary_range TEXT,
     description TEXT NOT NULL,
     requirements TEXT,
+    eligibility TEXT,
+    skills_required TEXT,
+    experience_required TEXT,
+    application_deadline TEXT,
+    application_link TEXT,
     application_email TEXT,
+    target_audience TEXT DEFAULT 'all',
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -84,6 +91,8 @@ CREATE TABLE IF NOT EXISTS public.events (
     location_details TEXT NOT NULL,
     category TEXT DEFAULT 'General',
     image_url TEXT,
+    registration_deadline TEXT,
+    target_audience TEXT DEFAULT 'all',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -145,6 +154,21 @@ CREATE TABLE IF NOT EXISTS public.announcements (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+-- 13. Job Applications Table
+CREATE TABLE IF NOT EXISTS public.job_applications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    job_id UUID REFERENCES public.jobs(id) ON DELETE CASCADE,
+    applicant_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    applicant_name TEXT NOT NULL,
+    applicant_email TEXT NOT NULL,
+    phone TEXT,
+    cover_note TEXT,
+    resume_url TEXT,
+    posted_by UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    status TEXT DEFAULT 'submitted',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
 -- Row Level Security (RLS) Enablement
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.student_profiles ENABLE ROW LEVEL SECURITY;
@@ -158,6 +182,7 @@ ALTER TABLE public.connections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.saved_jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.event_registrations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.announcements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.job_applications ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies - Open for testing (allow all operations with anon key)
 CREATE POLICY "Allow all users" ON public.users FOR ALL USING (true) WITH CHECK (true);
@@ -172,3 +197,5 @@ CREATE POLICY "Allow all connections" ON public.connections FOR ALL USING (true)
 CREATE POLICY "Allow all saved_jobs" ON public.saved_jobs FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all event_registrations" ON public.event_registrations FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all announcements" ON public.announcements FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all job_applications" ON public.job_applications FOR ALL USING (true) WITH CHECK (true);
+

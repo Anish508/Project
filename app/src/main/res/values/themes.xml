@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.AlumniConnect" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- Base application theme forced to Light Theme -->
+    <style name="Theme.AlumniConnect" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_variant</item>
@@ -15,10 +15,20 @@
         <item name="android:statusBarColor">@color/primary</item>
         <item name="android:windowLightStatusBar">false</item>
         
-        <!-- Background colors -->
+        <!-- Background & Surface colors -->
         <item name="android:windowBackground">@color/background</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/on_surface</item>
+        <item name="android:textColor">@color/on_background</item>
+        <item name="android:textColorPrimary">@color/on_background</item>
+        <item name="android:textColorSecondary">@color/on_surface_variant</item>
+
+        <!-- Edit text & Form default colors -->
+        <item name="editTextColor">@color/input_text</item>
+        <item name="android:textColorHint">@color/input_hint</item>
+
+        <!-- Card background default -->
+        <item name="cardBackgroundColor">@color/surface</item>
 
         <!-- Component styling -->
         <item name="materialButtonStyle">@style/Widget.AlumniConnect.Button</item>
@@ -39,5 +49,8 @@
         <item name="boxCornerRadiusBottomStart">12dp</item>
         <item name="boxCornerRadiusBottomEnd">12dp</item>
         <item name="boxStrokeColor">@color/primary</item>
+        <item name="boxBackgroundColor">@color/surface</item>
+        <item name="hintTextColor">@color/primary</item>
+        <item name="android:textColorHint">@color/input_hint</item>
     </style>
 </resources>

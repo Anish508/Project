@@ -29,8 +29,21 @@
                 android:id="@+id/etEventTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Event Title"
+                android:hint="Event Title *"
                 android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEventBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Event Banner Image URL (Optional)"
+                android:inputType="textUri" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -42,7 +55,7 @@
                 android:id="@+id/etEventDescription"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:hint="Description"
+                android:hint="Description *"
                 android:gravity="top"
                 android:inputType="textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -56,7 +69,7 @@
                 android:id="@+id/etEventDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Date (e.g. Oct 25, 2026)"
+                android:hint="Date (e.g. Oct 25, 2026) *"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,7 +82,20 @@
                 android:id="@+id/etEventTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Time (e.g. 10:00 AM - 1:00 PM)"
+                android:hint="Time (e.g. 10:00 AM - 1:00 PM) *"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etRegistrationDeadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Registration Deadline (e.g. Oct 24, 2026)"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,6 +124,48 @@
                 android:hint="Location Details / Meet Link"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Target Audience"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp" />
+
+        <RadioGroup
+            android:id="@+id/rgTargetAudience"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/rbAudienceAll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="Both"
+                android:textColor="#0F172A" />
+
+            <RadioButton
+                android:id="@+id/rbAudienceStudents"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Students Only"
+                android:textColor="#0F172A" />
+
+            <RadioButton
+                android:id="@+id/rbAudienceAlumni"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Alumni Only"
+                android:textColor="#0F172A" />
+        </RadioGroup>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreateEvent"

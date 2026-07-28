@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:hint="Job Title (e.g. Associate Software Engineer)"
+            android:hint="Job Role / Title *"
             app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Company Name"
+            android:hint="Company Name *"
             app:layout_constraintTop_toBottomOf="@id/tilJobTitle">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -55,13 +55,29 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCompanyLogo"
+            style="@style/Widget.AlumniConnect.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Company Logo URL (Optional)"
+            app:layout_constraintTop_toBottomOf="@id/tilCompany">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCompanyLogo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textUri" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilLocation"
             style="@style/Widget.AlumniConnect.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Location (e.g. Bangalore / Remote)"
-            app:layout_constraintTop_toBottomOf="@id/tilCompany">
+            android:hint="Location (e.g. Bangalore / Remote) *"
+            app:layout_constraintTop_toBottomOf="@id/tilCompanyLogo">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etLocation"
@@ -76,7 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Job Type (Full-time / Internship / Remote)"
+            android:hint="Job Type (Full-time / Internship / Contract)"
             app:layout_constraintTop_toBottomOf="@id/tilLocation">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -103,13 +119,77 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEligibility"
+            style="@style/Widget.AlumniConnect.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Eligibility Criteria (e.g. B.Tech CSE / 2024 Grad)"
+            app:layout_constraintTop_toBottomOf="@id/tilSalary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEligibility"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilSkillsRequired"
+            style="@style/Widget.AlumniConnect.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Required Skills (e.g. Java, Android, SQL, Git)"
+            app:layout_constraintTop_toBottomOf="@id/tilEligibility">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSkillsRequired"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilExperienceRequired"
+            style="@style/Widget.AlumniConnect.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Experience Required (e.g. 0-2 years / Freshers)"
+            app:layout_constraintTop_toBottomOf="@id/tilSkillsRequired">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etExperienceRequired"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilApplicationDeadline"
+            style="@style/Widget.AlumniConnect.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Last Application Date (e.g. 2026-08-30)"
+            app:layout_constraintTop_toBottomOf="@id/tilExperienceRequired">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etApplicationDeadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilDescription"
             style="@style/Widget.AlumniConnect.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Job Description &amp; Requirements"
-            app:layout_constraintTop_toBottomOf="@id/tilSalary">
+            android:hint="Job Description *"
+            app:layout_constraintTop_toBottomOf="@id/tilApplicationDeadline">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDescription"
@@ -121,13 +201,29 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilApplicationLink"
+            style="@style/Widget.AlumniConnect.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="External Application Link (Optional)"
+            app:layout_constraintTop_toBottomOf="@id/tilDescription">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etApplicationLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textUri" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilApplyEmail"
             style="@style/Widget.AlumniConnect.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Application Email / Link"
-            app:layout_constraintTop_toBottomOf="@id/tilDescription">
+            android:hint="Contact / Notification Email (Optional)"
+            app:layout_constraintTop_toBottomOf="@id/tilApplicationLink">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etApplyEmail"
@@ -136,6 +232,53 @@
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Target Audience Selection -->
+        <TextView
+            android:id="@+id/tvTargetAudienceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Target Audience"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilApplyEmail" />
+
+        <RadioGroup
+            android:id="@+id/rgTargetAudience"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/tvTargetAudienceLabel">
+
+            <RadioButton
+                android:id="@+id/rbAudienceAll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="Both"
+                android:textColor="#0F172A" />
+
+            <RadioButton
+                android:id="@+id/rbAudienceStudents"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Students Only"
+                android:textColor="#0F172A" />
+
+            <RadioButton
+                android:id="@+id/rbAudienceAlumni"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Alumni Only"
+                android:textColor="#0F172A" />
+        </RadioGroup>
+
         <Button
             android:id="@+id/btnSubmitJob"
             style="@style/Widget.AlumniConnect.Button"
@@ -143,7 +286,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Publish Job Post"
-            app:layout_constraintTop_toBottomOf="@id/tilApplyEmail" />
+            app:layout_constraintTop_toBottomOf="@id/rgTargetAudience" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

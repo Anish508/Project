@@ -18,13 +18,20 @@ import java.util.List;
 public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
     public interface OnJobClickListener {
         void onApply(Job job);
+        void onViewApplications(Job job);
     }
 
     private List<Job> jobs = new ArrayList<>();
     private OnJobClickListener listener;
+    private boolean isOwnerOrAdmin = false;
 
     public void setJobs(List<Job> jobs, OnJobClickListener listener) {
+        setJobs(jobs, false, listener);
+    }
+
+    public void setJobs(List<Job> jobs, boolean isOwnerOrAdmin, OnJobClickListener listener) {
         this.jobs = jobs != null ? jobs : new ArrayList<>();
+        this.isOwnerOrAdmin = isOwnerOrAdmin;
         this.listener = listener;
         notifyDataSetChanged();
     }
@@ -45,6 +52,15 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
         holder.tvSalary.setText(job.getSalaryRange() != null ? "Salary: " + job.getSalaryRange() : "Competitive Salary");
         holder.tvDescription.setText(job.getDescription());
 
+        if (isOwnerOrAdmin) {
+            holder.btnViewApplications.setVisibility(View.VISIBLE);
+            holder.btnViewApplications.setOnClickListener(v -> {
+                if (listener != null) listener.onViewApplications(job);
+            });
+        } else {
+            holder.btnViewApplications.setVisibility(View.GONE);
+        }
+
         holder.btnApply.setOnClickListener(v -> {
             if (listener != null) listener.onApply(job);
         });
@@ -57,7 +73,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
 
     static class JobViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvCompanyLocation, tvJobType, tvSalary, tvDescription;
-        Button btnApply;
+        Button btnApply, btnViewApplications;
 
         JobViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,6 +83,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             tvSalary = itemView.findViewById(R.id.tvSalary);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             btnApply = itemView.findViewById(R.id.btnApply);
+            btnViewApplications = itemView.findViewById(R.id.btnViewApplications);
         }
     }
 }

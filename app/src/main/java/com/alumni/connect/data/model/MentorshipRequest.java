@@ -24,6 +24,12 @@ public class MentorshipRequest {
     @SerializedName("created_at")
     private String createdAt;
 
+    @SerializedName("mentor")
+    private User mentor;
+
+    @SerializedName("mentee")
+    private User mentee;
+
     public MentorshipRequest() {}
 
     public String getId() { return id; }
@@ -46,4 +52,10 @@ public class MentorshipRequest {
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+
+    public User getMentor() { return mentor; }
+    public void setMentor(User mentor) { this.mentor = mentor; }
+
+    public User getMentee() { return mentee; }
+    public void setMentee(User mentee) { this.mentee = mentee; }
 }

@@ -32,7 +32,7 @@ public class HeaderInterceptor implements Interceptor {
                 .header("Content-Type", "application/json")
                 .header("Prefer", "return=representation");
 
-        if (authToken != null && !authToken.trim().isEmpty()) {
+        if (authToken != null && !authToken.trim().isEmpty() && authToken.trim().startsWith("ey")) {
             builder.header("Authorization", "Bearer " + authToken.trim());
         } else {
             builder.header("Authorization", "Bearer " + apiKey);

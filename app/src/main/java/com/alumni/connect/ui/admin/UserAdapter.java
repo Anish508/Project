@@ -86,12 +86,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
             if (user.isActive()) {
                 statusText += " • Active";
-                btnSuspend.setVisibility(View.VISIBLE);
+                if (btnSuspend instanceof com.google.android.material.button.MaterialButton) {
+                    ((com.google.android.material.button.MaterialButton) btnSuspend).setText("Suspend");
+                }
             } else {
                 statusText += " • Suspended";
-                btnSuspend.setVisibility(View.GONE);
+                if (btnSuspend instanceof com.google.android.material.button.MaterialButton) {
+                    ((com.google.android.material.button.MaterialButton) btnSuspend).setText("Activate");
+                }
             }
+            btnSuspend.setVisibility(View.VISIBLE);
             tvStatus.setText(statusText);
+            tvStatus.setTextColor(0xFF334155);
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onUserClick(user);

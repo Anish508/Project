@@ -29,13 +29,48 @@ public class MentorshipRepository {
         MutableLiveData<Resource<List<MentorshipRequest>>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
 
+        String query = "(mentor_id.eq." + userId + ",mentee_id.eq." + userId + ")";
+        dbService.getMentorshipRequestsForUserOrMentee(query).enqueue(new Callback<List<MentorshipRequest>>() {
+            @Override
+            public void onResponse(Call<List<MentorshipRequest>> call, Response<List<MentorshipRequest>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    result.setValue(Resource.success(response.body()));
+                } else {
+                    fetchFallbackRequests(userId, result);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MentorshipRequest>> call, Throwable t) {
+                fetchFallbackRequests(userId, result);
+            }
+        });
+
+        return result;
+    }
+
+    private void fetchFallbackRequests(String userId, MutableLiveData<Resource<List<MentorshipRequest>>> result) {
         dbService.getMentorshipRequestsForUser("eq." + userId).enqueue(new Callback<List<MentorshipRequest>>() {
             @Override
             public void onResponse(Call<List<MentorshipRequest>> call, Response<List<MentorshipRequest>> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                     result.setValue(Resource.success(response.body()));
                 } else {
-                    result.setValue(Resource.error("Failed to load mentorship requests.", null));
+                    dbService.getMentorshipRequestsByMentee("eq." + userId).enqueue(new Callback<List<MentorshipRequest>>() {
+                        @Override
+                        public void onResponse(Call<List<MentorshipRequest>> c, Response<List<MentorshipRequest>> r) {
+                            if (r.isSuccessful() && r.body() != null) {
+                                result.setValue(Resource.success(r.body()));
+                            } else {
+                                result.setValue(Resource.error("No mentorship requests found.", null));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<MentorshipRequest>> c, Throwable t) {
+                            result.setValue(Resource.error("Failed to load requests.", null));
+                        }
+                    });
                 }
             }
 
@@ -44,8 +79,6 @@ public class MentorshipRepository {
                 result.setValue(Resource.error("Network error: " + t.getMessage(), null));
             }
         });
-
-        return result;
     }
 
     public LiveData<Resource<MentorshipRequest>> createMentorshipRequest(MentorshipRequest request) {

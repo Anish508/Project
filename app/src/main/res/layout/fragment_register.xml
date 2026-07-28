@@ -62,21 +62,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="true"
-                android:text="@string/role_student" />
+                android:text="@string/role_student"
+                android:textColor="#0F172A" />
 
             <RadioButton
                 android:id="@+id/rbAlumni"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/role_alumni" />
-
-            <RadioButton
-                android:id="@+id/rbAdmin"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/role_admin" />
+                android:text="@string/role_alumni"
+                android:textColor="#0F172A" />
         </RadioGroup>
 
         <!-- Common Fields -->
@@ -171,7 +166,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Current Company (For Alumni)"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/tilYear">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -188,7 +183,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Designation (e.g. Senior Software Engineer)"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/tilCompany">
 
             <com.google.android.material.textfield.TextInputEditText

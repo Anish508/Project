@@ -259,6 +259,14 @@
             style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCreateJob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Post New Job Opportunity"
+            android:layout_marginBottom="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSendAnnouncement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

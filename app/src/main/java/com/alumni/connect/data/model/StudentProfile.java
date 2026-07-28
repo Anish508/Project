@@ -30,6 +30,9 @@ public class StudentProfile {
     @SerializedName("resume_url")
     private String resumeUrl;
 
+    @SerializedName("users")
+    private User user;
+
     public StudentProfile() {}
 
     public String getId() { return id; }
@@ -58,4 +61,7 @@ public class StudentProfile {
 
     public String getResumeUrl() { return resumeUrl; }
     public void setResumeUrl(String resumeUrl) { this.resumeUrl = resumeUrl; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }
