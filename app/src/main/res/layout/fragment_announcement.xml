@@ -82,6 +82,18 @@
     </RadioGroup>
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGenerateAi"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Enhance Announcement with Groq AI"
+        android:textColor="#4F46E5"
+        app:icon="@drawable/ic_ai_sparkles"
+        app:iconTint="#4F46E5"
+        app:strokeColor="#C7D2FE"
+        android:layout_marginBottom="12dp" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSendAnnouncement"
         android:layout_width="match_parent"
         android:layout_height="54dp"

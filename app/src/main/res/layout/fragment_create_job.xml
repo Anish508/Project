@@ -279,14 +279,27 @@
                 android:textColor="#0F172A" />
         </RadioGroup>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGenerateAiJob"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:text="Enhance Description with Groq AI"
+            android:textColor="#4F46E5"
+            app:icon="@drawable/ic_ai_sparkles"
+            app:iconTint="#4F46E5"
+            app:strokeColor="#C7D2FE"
+            app:layout_constraintTop_toBottomOf="@id/rgTargetAudience" />
+
         <Button
             android:id="@+id/btnSubmitJob"
             style="@style/Widget.AlumniConnect.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             android:text="Publish Job Post"
-            app:layout_constraintTop_toBottomOf="@id/rgTargetAudience" />
+            app:layout_constraintTop_toBottomOf="@id/btnGenerateAiJob" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

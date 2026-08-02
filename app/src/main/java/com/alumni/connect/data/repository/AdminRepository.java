@@ -286,4 +286,31 @@ public class AdminRepository {
         });
         return result;
     }
+
+    public LiveData<Resource<Boolean>> updateAnnouncement(String id, String title, String message) {
+        MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("title", title);
+        updates.put("message", message);
+
+        dbService.updateAnnouncement("eq." + id, updates).enqueue(new Callback<List<Announcement>>() {
+            @Override
+            public void onResponse(Call<List<Announcement>> call, Response<List<Announcement>> response) {
+                if (response.isSuccessful()) {
+                    result.setValue(Resource.success(true));
+                } else {
+                    result.setValue(Resource.error("Failed to update announcement", false));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Announcement>> call, Throwable t) {
+                result.setValue(Resource.error("Network error: " + t.getMessage(), false));
+            }
+        });
+
+        return result;
+    }
 }

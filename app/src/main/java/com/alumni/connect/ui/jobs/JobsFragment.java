@@ -131,6 +131,16 @@ public class JobsFragment extends Fragment {
             public void onViewApplications(Job job) {
                 ViewApplicationsDialogFragment.newInstance(job).show(getChildFragmentManager(), "ViewApplicationsDialog");
             }
+
+            @Override
+            public void onAiMatch(Job job) {
+                String desc = job.getDescription() != null ? job.getDescription() : "";
+                if (job.getSkillsRequired() != null && !job.getSkillsRequired().isEmpty()) {
+                    desc += "\nRequired Skills: " + job.getSkillsRequired();
+                }
+                AiAdvisorDialogFragment.newInstance(job.getTitle(), desc)
+                        .show(getChildFragmentManager(), "AiAdvisorDialog");
+            }
         };
     }
 

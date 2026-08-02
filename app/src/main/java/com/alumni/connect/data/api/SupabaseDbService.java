@@ -137,6 +137,9 @@ public interface SupabaseDbService {
     @POST("rest/v1/posts")
     Call<List<Post>> createPost(@Body Post post);
 
+    @PATCH("rest/v1/posts")
+    Call<List<Post>> updatePost(@Query("id") String idQuery, @Body Map<String, Object> updates);
+
     @DELETE("rest/v1/posts")
     Call<Void> deletePost(@Query("id") String idQuery);
 
@@ -179,6 +182,9 @@ public interface SupabaseDbService {
 
     @GET("rest/v1/announcements?order=created_at.desc")
     Call<List<Announcement>> getAnnouncements();
+
+    @PATCH("rest/v1/announcements")
+    Call<List<Announcement>> updateAnnouncement(@Query("id") String idQuery, @Body Map<String, Object> updates);
 
     @DELETE("rest/v1/announcements")
     Call<Void> deleteAnnouncement(@Query("id") String idQuery);

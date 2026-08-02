@@ -68,4 +68,31 @@ public class PostRepository {
 
         return result;
     }
+
+    public LiveData<Resource<Boolean>> updatePost(String id, String title, String content) {
+        MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        java.util.Map<String, Object> updates = new java.util.HashMap<>();
+        updates.put("title", title);
+        updates.put("content", content);
+
+        dbService.updatePost("eq." + id, updates).enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                if (response.isSuccessful()) {
+                    result.setValue(Resource.success(true));
+                } else {
+                    result.setValue(Resource.error("Failed to update post.", false));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                result.setValue(Resource.error("Network error: " + t.getMessage(), false));
+            }
+        });
+
+        return result;
+    }
 }

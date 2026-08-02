@@ -107,6 +107,11 @@ public class ApplyJobDialogFragment extends BottomSheetDialogFragment {
             binding.btnSubmitApplication.setEnabled(true);
 
             if (resource.status == Resource.Status.SUCCESS) {
+                com.alumni.connect.util.NotificationHelper.showNotification(
+                        requireContext(),
+                        "Job Application Submitted",
+                        "✅ Application sent for " + job.getTitle() + " at " + job.getCompany()
+                );
                 Toast.makeText(requireContext(), "Application submitted successfully to " + job.getCompany() + "!", Toast.LENGTH_LONG).show();
                 sendNotificationEmail(name, email, phone, resume, coverNote);
                 dismiss();

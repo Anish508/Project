@@ -66,9 +66,9 @@ public class AdminHomeFragment extends Fragment {
                 binding.tvTotalStudents.setText(String.valueOf(students));
                 binding.tvTotalAlumni.setText(String.valueOf(alumni));
             } else {
-                binding.tvTotalUsers.setText("14");
-                binding.tvTotalStudents.setText("8");
-                binding.tvTotalAlumni.setText("5");
+                binding.tvTotalUsers.setText("0");
+                binding.tvTotalStudents.setText("0");
+                binding.tvTotalAlumni.setText("0");
             }
         });
 
@@ -77,7 +77,7 @@ public class AdminHomeFragment extends Fragment {
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
                 binding.tvTotalJobs.setText(String.valueOf(resource.data.size()));
             } else {
-                binding.tvTotalJobs.setText("4");
+                binding.tvTotalJobs.setText("0");
             }
         });
 
@@ -86,7 +86,7 @@ public class AdminHomeFragment extends Fragment {
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
                 binding.tvTotalEvents.setText(String.valueOf(resource.data.size()));
             } else {
-                binding.tvTotalEvents.setText("2");
+                binding.tvTotalEvents.setText("0");
             }
         });
 
@@ -95,7 +95,7 @@ public class AdminHomeFragment extends Fragment {
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
                 binding.tvTotalPosts.setText(String.valueOf(resource.data.size()));
             } else {
-                binding.tvTotalPosts.setText("3");
+                binding.tvTotalPosts.setText("0");
             }
         });
     }

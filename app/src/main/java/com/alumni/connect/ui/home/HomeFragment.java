@@ -42,12 +42,22 @@ public class HomeFragment extends Fragment {
         binding.tvUserRoleBadge.setText("Connected as " + sessionManager.getRole().toUpperCase());
 
         adapter = new PostAdapter();
+        adapter.setOnPostClickListener(post -> {
+            PostDetailDialogFragment dialog = PostDetailDialogFragment.newInstance(post);
+            dialog.show(getChildFragmentManager(), "post_detail_dialog");
+        });
+
         binding.rvPosts.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvPosts.setAdapter(adapter);
 
-        binding.swipeRefresh.setOnRefreshListener(this::loadPosts);
+        binding.swipeRefresh.setOnRefreshListener(this::refreshData);
 
+        refreshData();
+    }
+
+    private void refreshData() {
         loadPosts();
+        loadLiveMetrics();
     }
 
     private void loadPosts() {
@@ -56,14 +66,34 @@ public class HomeFragment extends Fragment {
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
                 adapter.setPosts(resource.data);
             } else if (resource.status == Resource.Status.ERROR) {
-                // Populate mock welcome posts if database empty
-                List<Post> dummyPosts = new ArrayList<>();
+                List<Post> welcomePosts = new ArrayList<>();
                 Post p1 = new Post();
-                p1.setTitle("Welcome to University Alumni Portal 2026!");
+                p1.setTitle("Welcome to University Alumni Portal!");
                 p1.setContent("Connect with fellow alumni, find career mentorship, browse job postings, and join university events.");
                 p1.setPostType("announcement");
-                dummyPosts.add(p1);
-                adapter.setPosts(dummyPosts);
+                welcomePosts.add(p1);
+                adapter.setPosts(welcomePosts);
+            }
+        });
+    }
+
+    private void loadLiveMetrics() {
+        viewModel.getAlumniProfiles().observe(getViewLifecycleOwner(), resource -> {
+            if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                int count = resource.data.size();
+                binding.tvStatAlumniCount.setText(String.valueOf(count));
+                binding.tvStatMentorsCount.setText(String.valueOf(count));
+            } else {
+                binding.tvStatAlumniCount.setText("0");
+                binding.tvStatMentorsCount.setText("0");
+            }
+        });
+
+        viewModel.getJobs().observe(getViewLifecycleOwner(), resource -> {
+            if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                binding.tvStatJobsCount.setText(String.valueOf(resource.data.size()));
+            } else {
+                binding.tvStatJobsCount.setText("0");
             }
         });
     }

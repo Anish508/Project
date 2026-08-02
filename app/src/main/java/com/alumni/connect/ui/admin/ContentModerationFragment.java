@@ -59,6 +59,14 @@ public class ContentModerationFragment extends Fragment {
 
         binding.swipeRefresh.setOnRefreshListener(this::loadContent);
 
+        binding.fabCreatePost.setOnClickListener(v -> {
+            if (currentTab == 0) {
+                androidx.navigation.Navigation.findNavController(requireView()).navigate(R.id.nav_announcement);
+            } else {
+                androidx.navigation.Navigation.findNavController(requireView()).navigate(R.id.nav_create_job);
+            }
+        });
+
         loadContent();
     }
 
@@ -76,13 +84,7 @@ public class ContentModerationFragment extends Fragment {
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
                 adapter.setPosts(resource.data);
             } else if (resource.status == Resource.Status.ERROR) {
-                List<Post> dummy = new ArrayList<>();
-                Post p = new Post();
-                p.setId("dummy-post-1");
-                p.setTitle("Mock Post for Testing Moderation");
-                p.setContent("This is a mock post body that the admin can delete using moderation tools.");
-                dummy.add(p);
-                adapter.setPosts(dummy);
+                adapter.setPosts(new ArrayList<>());
             }
         });
     }
@@ -93,14 +95,7 @@ public class ContentModerationFragment extends Fragment {
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
                 adapter.setJobs(resource.data);
             } else if (resource.status == Resource.Status.ERROR) {
-                List<Job> dummy = new ArrayList<>();
-                Job j = new Job();
-                j.setId("dummy-job-1");
-                j.setTitle("Mock Developer Job");
-                j.setCompany("Mock Company Ltd");
-                j.setLocation("Remote");
-                dummy.add(j);
-                adapter.setJobs(dummy);
+                adapter.setJobs(new ArrayList<>());
             }
         });
     }
@@ -144,6 +139,16 @@ public class ContentModerationFragment extends Fragment {
                         }
                     });
                 });
+                if (holder.btnEdit != null) {
+                    holder.btnEdit.setVisibility(View.VISIBLE);
+                    holder.btnEdit.setOnClickListener(v -> {
+                        EditContentDialogFragment dialog = EditContentDialogFragment.newInstance(
+                                "post", post.getId(), post.getTitle(), post.getContent()
+                        );
+                        dialog.setOnContentUpdatedListener(ContentModerationFragment.this::loadContent);
+                        dialog.show(getChildFragmentManager(), "EditContentDialog");
+                    });
+                }
             } else if (obj instanceof Job) {
                 Job job = (Job) obj;
                 holder.tvTitle.setText(job.getTitle() + " at " + job.getCompany());
@@ -158,6 +163,9 @@ public class ContentModerationFragment extends Fragment {
                         }
                     });
                 });
+                if (holder.btnEdit != null) {
+                    holder.btnEdit.setVisibility(View.GONE);
+                }
             }
         }
 
@@ -168,17 +176,15 @@ public class ContentModerationFragment extends Fragment {
 
         class ModerationViewHolder extends RecyclerView.ViewHolder {
             TextView tvTitle, tvContent, tvMeta;
-            View btnDelete;
+            View btnDelete, btnEdit;
 
             public ModerationViewHolder(@NonNull View itemView) {
                 super(itemView);
                 tvTitle = itemView.findViewById(R.id.tvPostTitle);
                 tvContent = itemView.findViewById(R.id.tvPostContent);
                 tvMeta = itemView.findViewById(R.id.tvPostAuthorTime);
-                btnDelete = itemView.findViewById(R.id.btnDeletePost); // Reusing post layout button if exists
-                if (btnDelete == null) {
-                    btnDelete = itemView.findViewById(R.id.btnDeletePost);
-                }
+                btnDelete = itemView.findViewById(R.id.btnDeletePost);
+                btnEdit = itemView.findViewById(R.id.btnEditPost);
             }
         }
     }

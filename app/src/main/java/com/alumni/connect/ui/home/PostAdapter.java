@@ -16,6 +16,15 @@ import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     private List<Post> posts = new ArrayList<>();
+    private OnPostClickListener listener;
+
+    public interface OnPostClickListener {
+        void onPostClick(Post post);
+    }
+
+    public void setOnPostClickListener(OnPostClickListener listener) {
+        this.listener = listener;
+    }
 
     public void setPosts(List<Post> posts) {
         this.posts = posts != null ? posts : new ArrayList<>();
@@ -35,6 +44,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.tvTitle.setText(post.getTitle());
         holder.tvContent.setText(post.getContent());
         holder.tvBadge.setText(post.getPostType() != null ? post.getPostType().toUpperCase() : "POST");
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onPostClick(post);
+            }
+        });
     }
 
     @Override

@@ -37,6 +37,48 @@ public class CreateJobFragment extends Fragment {
         sessionManager = new SessionManager(requireContext());
 
         binding.btnSubmitJob.setOnClickListener(v -> submitJob());
+        binding.btnGenerateAiJob.setOnClickListener(v -> generateJobDescriptionWithAi());
+    }
+
+    private void generateJobDescriptionWithAi() {
+        String title = binding.etJobTitle.getText() != null ? binding.etJobTitle.getText().toString().trim() : "";
+        String desc = binding.etDescription.getText() != null ? binding.etDescription.getText().toString().trim() : "";
+
+        String notes = title.isEmpty() ? desc : title + " - " + desc;
+        if (notes.isEmpty()) {
+            Toast.makeText(requireContext(), "Please enter a Job Title or brief summary first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        binding.btnGenerateAiJob.setEnabled(false);
+        binding.btnGenerateAiJob.setText("Enhancing with Groq AI...");
+
+        com.alumni.connect.data.repository.AiAdvisorRepository aiRepo = new com.alumni.connect.data.repository.AiAdvisorRepository();
+        aiRepo.generatePostContent(notes, "job opportunity & position description").observe(getViewLifecycleOwner(), resource -> {
+            binding.btnGenerateAiJob.setEnabled(true);
+            binding.btnGenerateAiJob.setText("Enhance Description with Groq AI");
+
+            if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                String fullText = resource.data;
+                if (fullText.contains("TITLE:")) {
+                    int titleStart = fullText.indexOf("TITLE:") + 6;
+                    int lineBreak = fullText.indexOf("\n", titleStart);
+                    if (lineBreak != -1) {
+                        String generatedTitle = fullText.substring(titleStart, lineBreak).trim();
+                        String generatedContent = fullText.substring(lineBreak).trim();
+                        if (title.isEmpty()) binding.etJobTitle.setText(generatedTitle);
+                        binding.etDescription.setText(generatedContent);
+                    } else {
+                        binding.etDescription.setText(fullText);
+                    }
+                } else {
+                    binding.etDescription.setText(fullText);
+                }
+                Toast.makeText(requireContext(), "Job description enhanced with Groq AI!", Toast.LENGTH_SHORT).show();
+            } else if (resource.status == Resource.Status.ERROR) {
+                Toast.makeText(requireContext(), "AI Error: " + resource.message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void submitJob() {
@@ -85,6 +127,11 @@ public class CreateJobFragment extends Fragment {
         job.setTargetAudience(targetAudience);
 
         viewModel.createJob(job).observe(getViewLifecycleOwner(), resource -> {
+            com.alumni.connect.util.NotificationHelper.showNotification(
+                    requireContext(),
+                    "New Job Opportunity Posted",
+                    "💼 " + title + " at " + company
+            );
             if (resource.status == Resource.Status.SUCCESS) {
                 Toast.makeText(requireContext(), "Job published successfully!", Toast.LENGTH_LONG).show();
                 Navigation.findNavController(requireView()).popBackStack();

@@ -36,6 +36,49 @@ public class AnnouncementFragment extends Fragment {
         sessionManager = new SessionManager(requireContext());
 
         binding.btnSendAnnouncement.setOnClickListener(v -> submitAnnouncement());
+        binding.btnGenerateAi.setOnClickListener(v -> generateWithAi());
+    }
+
+    private void generateWithAi() {
+        String msg = binding.etAnnouncementMessage.getText() != null ? binding.etAnnouncementMessage.getText().toString().trim() : "";
+        if (msg.isEmpty()) {
+            msg = binding.etAnnouncementTitle.getText() != null ? binding.etAnnouncementTitle.getText().toString().trim() : "";
+        }
+
+        if (msg.isEmpty()) {
+            Toast.makeText(requireContext(), "Please enter a title or short notes first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        binding.btnGenerateAi.setEnabled(false);
+        binding.btnGenerateAi.setText("Generating with Groq AI...");
+
+        com.alumni.connect.data.repository.AiAdvisorRepository aiRepo = new com.alumni.connect.data.repository.AiAdvisorRepository();
+        aiRepo.generatePostContent(msg, "official announcement broadcast").observe(getViewLifecycleOwner(), resource -> {
+            binding.btnGenerateAi.setEnabled(true);
+            binding.btnGenerateAi.setText("Enhance Announcement with Groq AI");
+
+            if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                String fullText = resource.data;
+                if (fullText.contains("TITLE:")) {
+                    int titleStart = fullText.indexOf("TITLE:") + 6;
+                    int lineBreak = fullText.indexOf("\n", titleStart);
+                    if (lineBreak != -1) {
+                        String generatedTitle = fullText.substring(titleStart, lineBreak).trim();
+                        String generatedMessage = fullText.substring(lineBreak).trim();
+                        binding.etAnnouncementTitle.setText(generatedTitle);
+                        binding.etAnnouncementMessage.setText(generatedMessage);
+                    } else {
+                        binding.etAnnouncementMessage.setText(fullText);
+                    }
+                } else {
+                    binding.etAnnouncementMessage.setText(fullText);
+                }
+                Toast.makeText(requireContext(), "Announcement enhanced with Groq AI!", Toast.LENGTH_SHORT).show();
+            } else if (resource.status == Resource.Status.ERROR) {
+                Toast.makeText(requireContext(), "AI Error: " + resource.message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void submitAnnouncement() {

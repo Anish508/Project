@@ -36,6 +36,49 @@ public class CreatePostFragment extends Fragment {
         sessionManager = new SessionManager(requireContext());
 
         binding.btnSubmitPost.setOnClickListener(v -> submitPost());
+        binding.btnGenerateAi.setOnClickListener(v -> generateWithAi());
+    }
+
+    private void generateWithAi() {
+        String notes = binding.etPostContent.getText() != null ? binding.etPostContent.getText().toString().trim() : "";
+        if (notes.isEmpty()) {
+            notes = binding.etPostTitle.getText() != null ? binding.etPostTitle.getText().toString().trim() : "";
+        }
+
+        if (notes.isEmpty()) {
+            Toast.makeText(requireContext(), "Please enter a few bullet points in Title or Body first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        binding.btnGenerateAi.setEnabled(false);
+        binding.btnGenerateAi.setText("Generating with Groq AI...");
+
+        com.alumni.connect.data.repository.AiAdvisorRepository aiRepo = new com.alumni.connect.data.repository.AiAdvisorRepository();
+        aiRepo.generatePostContent(notes, "community announcement").observe(getViewLifecycleOwner(), resource -> {
+            binding.btnGenerateAi.setEnabled(true);
+            binding.btnGenerateAi.setText("Enhance / Generate with Groq AI");
+
+            if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                String fullText = resource.data;
+                if (fullText.contains("TITLE:")) {
+                    int titleStart = fullText.indexOf("TITLE:") + 6;
+                    int lineBreak = fullText.indexOf("\n", titleStart);
+                    if (lineBreak != -1) {
+                        String generatedTitle = fullText.substring(titleStart, lineBreak).trim();
+                        String generatedContent = fullText.substring(lineBreak).trim();
+                        binding.etPostTitle.setText(generatedTitle);
+                        binding.etPostContent.setText(generatedContent);
+                    } else {
+                        binding.etPostContent.setText(fullText);
+                    }
+                } else {
+                    binding.etPostContent.setText(fullText);
+                }
+                Toast.makeText(requireContext(), "Post enhanced with Groq AI!", Toast.LENGTH_SHORT).show();
+            } else if (resource.status == Resource.Status.ERROR) {
+                Toast.makeText(requireContext(), "AI Error: " + resource.message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void submitPost() {
@@ -72,6 +115,11 @@ public class CreatePostFragment extends Fragment {
 
     private void doPublishPost(Post post) {
         postRepository.createPost(post).observe(getViewLifecycleOwner(), resource -> {
+            com.alumni.connect.util.NotificationHelper.showNotification(
+                    requireContext(),
+                    "New Community Broadcast",
+                    "📢 " + post.getTitle()
+            );
             if (resource.status == Resource.Status.SUCCESS) {
                 Toast.makeText(requireContext(), "Post published successfully!", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(requireView()).popBackStack();

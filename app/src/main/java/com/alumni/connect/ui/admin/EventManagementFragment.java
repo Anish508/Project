@@ -114,7 +114,7 @@ public class EventManagementFragment extends Fragment {
             holder.tvDescription.setText(event.getDescription());
             
             holder.btnRSVP.setText("Delete Event");
-            holder.btnRSVP.setBackgroundColor(getResources().getColor(R.color.error));
+            holder.btnRSVP.setBackgroundColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.error));
             holder.btnRSVP.setOnClickListener(v -> {
                 adminRepository.deleteEvent(event.getId()).observe(getViewLifecycleOwner(), res -> {
                     if (res.status == Resource.Status.SUCCESS) {
@@ -123,6 +123,17 @@ public class EventManagementFragment extends Fragment {
                     }
                 });
             });
+
+            if (holder.btnEdit != null) {
+                holder.btnEdit.setVisibility(View.VISIBLE);
+                holder.btnEdit.setOnClickListener(v -> {
+                    EditContentDialogFragment dialog = EditContentDialogFragment.newInstance(
+                            "event", event.getId(), event.getTitle(), event.getDescription()
+                    );
+                    dialog.setOnContentUpdatedListener(EventManagementFragment.this::loadEvents);
+                    dialog.show(getChildFragmentManager(), "EditEventDialog");
+                });
+            }
         }
 
         @Override
@@ -132,7 +143,7 @@ public class EventManagementFragment extends Fragment {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             TextView tvTitle, tvDateTime, tvLocation, tvDescription;
-            Button btnRSVP;
+            Button btnRSVP, btnEdit;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -141,6 +152,7 @@ public class EventManagementFragment extends Fragment {
                 tvLocation = itemView.findViewById(R.id.tvLocation);
                 tvDescription = itemView.findViewById(R.id.tvEventDescription);
                 btnRSVP = itemView.findViewById(R.id.btnRSVP);
+                btnEdit = itemView.findViewById(R.id.btnEditEvent);
             }
         }
     }

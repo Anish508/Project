@@ -94,13 +94,25 @@
                 app:strokeColor="@color/primary"
                 android:visibility="gone" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAiMatch"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI Match"
+                android:textColor="#4F46E5"
+                android:textSize="12sp"
+                app:icon="@drawable/ic_ai_sparkles"
+                app:iconTint="#4F46E5"
+                app:strokeColor="#C7D2FE" />
+
             <Button
                 android:id="@+id/btnApply"
                 style="@style/Widget.AlumniConnect.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:paddingHorizontal="20dp"
+                android:paddingHorizontal="16dp"
                 android:text="Apply Now"
                 android:textSize="12sp" />
         </LinearLayout>

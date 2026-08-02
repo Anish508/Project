@@ -97,40 +97,13 @@ public class AuthRepository {
                     sessionManager.saveSession(user.getId(), user.getEmail(), user.getRole(), user.getFullName(), "test_session_token");
                     result.setValue(Resource.success(user));
                 } else {
-                    // Determine role based on email if registering mock
-                    String role = Constants.ROLE_STUDENT;
-                    if (email.toLowerCase().contains("admin")) role = Constants.ROLE_ADMIN;
-                    else if (email.toLowerCase().contains("alumni")) role = Constants.ROLE_ALUMNI;
-
-                    String mockId = java.util.UUID.randomUUID().toString();
-                    User fallbackUser = new User(mockId, email, role, email.split("@")[0], "");
-                    fallbackUser.setVerified(true);
-                    fallbackUser.setActive(true);
-
-                    dbService.createUser(fallbackUser).enqueue(new Callback<List<User>>() {
-                        @Override public void onResponse(Call<List<User>> c, Response<List<User>> r) {}
-                        @Override public void onFailure(Call<List<User>> c, Throwable t) {}
-                    });
-
-                    sessionManager.saveSession(mockId, email, fallbackUser.getRole(), fallbackUser.getFullName(), "test_session_token");
-                    result.setValue(Resource.success(fallbackUser));
+                    result.setValue(Resource.error("Account not found. Please register first.", null));
                 }
             }
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-                String mockId = java.util.UUID.randomUUID().toString();
-                User fallbackUser = new User(mockId, email, Constants.ROLE_STUDENT, "Test User", "");
-                fallbackUser.setVerified(true);
-                fallbackUser.setActive(true);
-
-                dbService.createUser(fallbackUser).enqueue(new Callback<List<User>>() {
-                    @Override public void onResponse(Call<List<User>> c, Response<List<User>> r) {}
-                    @Override public void onFailure(Call<List<User>> c, Throwable t) {}
-                });
-
-                sessionManager.saveSession(mockId, email, fallbackUser.getRole(), fallbackUser.getFullName(), "test_session_token");
-                result.setValue(Resource.success(fallbackUser));
+                result.setValue(Resource.error("Invalid credentials or network connection issue. Please try again.", null));
             }
         });
     }

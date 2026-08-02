@@ -54,17 +54,35 @@
             android:textColor="#475569"
             android:textSize="13sp" />
 
-        <Button
-            android:id="@+id/btnRSVP"
-            style="@style/Widget.AlumniConnect.Button"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="12dp"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="8dp"
-            android:text="RSVP Event"
-            android:textSize="12sp" />
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="12dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditEvent"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Edit"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                app:strokeColor="@color/primary"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnRSVP"
+                style="@style/Widget.AlumniConnect.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:text="RSVP Event"
+                android:textSize="12sp" />
+        </LinearLayout>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

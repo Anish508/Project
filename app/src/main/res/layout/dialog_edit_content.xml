@@ -2,63 +2,85 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/background">
+    android:padding="24dp"
+    android:background="#FFFFFF">
 
-    <TextView
+    <!-- Header Row -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create New Post"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/on_background"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tvEditHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="Edit Content"
+            android:textColor="#0F172A"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            android:contentDescription="Close"
+            app:tint="@color/on_surface_variant" />
+    </RelativeLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilEditTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etPostTitle"
+            android:id="@+id/etEditTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Post Title"
+            android:hint="Title"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilEditBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etPostContent"
+            android:id="@+id/etEditBody"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:hint="Write something here..."
+            android:layout_height="140dp"
+            android:hint="Description / Content"
             android:gravity="top"
             android:inputType="textMultiLine" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnGenerateAi"
+        android:id="@+id/btnGenerateAiEdit"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="Enhance / Generate with Groq AI"
+        android:layout_height="44dp"
+        android:text="Refine with Groq AI"
         android:textColor="#4F46E5"
         app:icon="@drawable/ic_ai_sparkles"
         app:iconTint="#4F46E5"
         app:strokeColor="#C7D2FE"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="16dp" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSubmitPost"
+        android:id="@+id/btnSave"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:text="Publish Post"
+        android:layout_height="50dp"
+        android:text="Save Changes"
         app:cornerRadius="8dp" />
 </LinearLayout>

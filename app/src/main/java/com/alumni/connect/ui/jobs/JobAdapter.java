@@ -19,6 +19,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
     public interface OnJobClickListener {
         void onApply(Job job);
         void onViewApplications(Job job);
+        void onAiMatch(Job job);
     }
 
     private List<Job> jobs = new ArrayList<>();
@@ -64,6 +65,12 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
         holder.btnApply.setOnClickListener(v -> {
             if (listener != null) listener.onApply(job);
         });
+
+        if (holder.btnAiMatch != null) {
+            holder.btnAiMatch.setOnClickListener(v -> {
+                if (listener != null) listener.onAiMatch(job);
+            });
+        }
     }
 
     @Override
@@ -73,7 +80,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
 
     static class JobViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvCompanyLocation, tvJobType, tvSalary, tvDescription;
-        Button btnApply, btnViewApplications;
+        Button btnApply, btnViewApplications, btnAiMatch;
 
         JobViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -84,6 +91,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             tvDescription = itemView.findViewById(R.id.tvDescription);
             btnApply = itemView.findViewById(R.id.btnApply);
             btnViewApplications = itemView.findViewById(R.id.btnViewApplications);
+            btnAiMatch = itemView.findViewById(R.id.btnAiMatch);
         }
     }
 }
