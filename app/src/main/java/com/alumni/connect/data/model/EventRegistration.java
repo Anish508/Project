@@ -15,6 +15,9 @@ public class EventRegistration {
     @SerializedName("created_at")
     private String createdAt;
 
+    @SerializedName("users")
+    private User user;
+
     public EventRegistration() {}
 
     public String getId() { return id; }
@@ -28,4 +31,7 @@ public class EventRegistration {
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }

@@ -99,4 +99,79 @@ public class EventRepository {
 
         return result;
     }
+
+    // ==================== EVENT REGISTRATIONS / RSVPS ====================
+
+    public LiveData<Resource<com.alumni.connect.data.model.EventRegistration>> registerForEvent(com.alumni.connect.data.model.EventRegistration registration) {
+        MutableLiveData<Resource<com.alumni.connect.data.model.EventRegistration>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        dbService.registerForEvent(registration).enqueue(new Callback<List<com.alumni.connect.data.model.EventRegistration>>() {
+            @Override
+            public void onResponse(Call<List<com.alumni.connect.data.model.EventRegistration>> call, Response<List<com.alumni.connect.data.model.EventRegistration>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null && !response.body().isEmpty()) {
+                        result.setValue(Resource.success(response.body().get(0)));
+                    } else {
+                        result.setValue(Resource.success(registration));
+                    }
+                } else {
+                    result.setValue(Resource.error("Failed to RSVP for event: HTTP " + response.code(), null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<com.alumni.connect.data.model.EventRegistration>> call, Throwable t) {
+                result.setValue(Resource.error("Network error: " + t.getMessage(), null));
+            }
+        });
+
+        return result;
+    }
+
+    public LiveData<Resource<List<com.alumni.connect.data.model.EventRegistration>>> getEventRegistrations(String eventId) {
+        MutableLiveData<Resource<List<com.alumni.connect.data.model.EventRegistration>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        dbService.getEventRegistrations("eq." + eventId).enqueue(new Callback<List<com.alumni.connect.data.model.EventRegistration>>() {
+            @Override
+            public void onResponse(Call<List<com.alumni.connect.data.model.EventRegistration>> call, Response<List<com.alumni.connect.data.model.EventRegistration>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.setValue(Resource.success(response.body()));
+                } else {
+                    result.setValue(Resource.error("Failed to load attendees", null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<com.alumni.connect.data.model.EventRegistration>> call, Throwable t) {
+                result.setValue(Resource.error("Network error: " + t.getMessage(), null));
+            }
+        });
+
+        return result;
+    }
+
+    public LiveData<Resource<List<com.alumni.connect.data.model.EventRegistration>>> getUserEventRegistrations(String userId) {
+        MutableLiveData<Resource<List<com.alumni.connect.data.model.EventRegistration>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        dbService.getUserEventRegistrations("eq." + userId).enqueue(new Callback<List<com.alumni.connect.data.model.EventRegistration>>() {
+            @Override
+            public void onResponse(Call<List<com.alumni.connect.data.model.EventRegistration>> call, Response<List<com.alumni.connect.data.model.EventRegistration>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.setValue(Resource.success(response.body()));
+                } else {
+                    result.setValue(Resource.error("Failed to load registrations", null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<com.alumni.connect.data.model.EventRegistration>> call, Throwable t) {
+                result.setValue(Resource.error("Network error: " + t.getMessage(), null));
+            }
+        });
+
+        return result;
+    }
 }

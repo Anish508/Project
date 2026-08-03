@@ -124,6 +124,14 @@ public class EventManagementFragment extends Fragment {
                 });
             });
 
+            if (holder.btnViewAttendees != null) {
+                holder.btnViewAttendees.setVisibility(View.VISIBLE);
+                holder.btnViewAttendees.setOnClickListener(v -> {
+                    com.alumni.connect.ui.events.ViewAttendeesDialogFragment.newInstance(event)
+                            .show(getChildFragmentManager(), "ViewAttendeesDialog");
+                });
+            }
+
             if (holder.btnEdit != null) {
                 holder.btnEdit.setVisibility(View.VISIBLE);
                 holder.btnEdit.setOnClickListener(v -> {
@@ -144,6 +152,7 @@ public class EventManagementFragment extends Fragment {
         class ViewHolder extends RecyclerView.ViewHolder {
             TextView tvTitle, tvDateTime, tvLocation, tvDescription;
             Button btnRSVP, btnEdit;
+            View btnViewAttendees;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -153,6 +162,7 @@ public class EventManagementFragment extends Fragment {
                 tvDescription = itemView.findViewById(R.id.tvEventDescription);
                 btnRSVP = itemView.findViewById(R.id.btnRSVP);
                 btnEdit = itemView.findViewById(R.id.btnEditEvent);
+                btnViewAttendees = itemView.findViewById(R.id.btnViewAttendees);
             }
         }
     }

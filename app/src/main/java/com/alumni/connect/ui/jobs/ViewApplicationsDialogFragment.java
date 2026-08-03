@@ -60,7 +60,8 @@ public class ViewApplicationsDialogFragment extends BottomSheetDialogFragment {
 
     private void loadApplications() {
         if (job.getId() == null || job.getId().isEmpty()) {
-            showMockApplications();
+            binding.tvEmptyApplications.setVisibility(View.VISIBLE);
+            adapter.setApplications(new ArrayList<>());
             return;
         }
 
@@ -69,32 +70,10 @@ public class ViewApplicationsDialogFragment extends BottomSheetDialogFragment {
                 binding.tvEmptyApplications.setVisibility(View.GONE);
                 adapter.setApplications(resource.data);
             } else {
-                showMockApplications();
+                binding.tvEmptyApplications.setVisibility(View.VISIBLE);
+                adapter.setApplications(new ArrayList<>());
             }
         });
-    }
-
-    private void showMockApplications() {
-        List<JobApplication> mocks = new ArrayList<>();
-        JobApplication a1 = new JobApplication();
-        a1.setApplicantName("Ganesh Gowda");
-        a1.setApplicantEmail("ganesh9741@gmail.com");
-        a1.setPhone("+91 9876543210");
-        a1.setCoverNote("Experienced with Android Studio, Java, Supabase REST APIs, and MVVM Architecture.");
-        a1.setResumeUrl("https://github.com/ganesh-gowda");
-
-        JobApplication a2 = new JobApplication();
-        a2.setApplicantName("Anish Kumar");
-        a2.setApplicantEmail("anish@gmail.com");
-        a2.setPhone("+91 9123456789");
-        a2.setCoverNote("Final year CS student proficient in mobile development and database design.");
-        a2.setResumeUrl("https://linkedin.com/in/anish-kumar");
-
-        mocks.add(a1);
-        mocks.add(a2);
-
-        binding.tvEmptyApplications.setVisibility(View.GONE);
-        adapter.setApplications(mocks);
     }
 
     @Override

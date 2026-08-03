@@ -164,7 +164,11 @@ public class ContentModerationFragment extends Fragment {
                     });
                 });
                 if (holder.btnEdit != null) {
-                    holder.btnEdit.setVisibility(View.GONE);
+                    holder.btnEdit.setVisibility(View.VISIBLE);
+                    holder.btnEdit.setOnClickListener(v -> {
+                        com.alumni.connect.ui.jobs.ViewApplicationsDialogFragment.newInstance(job)
+                                .show(getChildFragmentManager(), "ViewApplicationsDialog");
+                    });
                 }
             }
         }

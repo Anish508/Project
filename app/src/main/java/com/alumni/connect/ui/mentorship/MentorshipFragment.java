@@ -148,13 +148,54 @@ public class MentorshipFragment extends Fragment {
     }
 
     private void loadEvents() {
-        viewModel.getEvents().observe(getViewLifecycleOwner(), resource -> {
-            binding.swipeRefresh.setRefreshing(resource.status == Resource.Status.LOADING);
-            if (resource.status == Resource.Status.SUCCESS && resource.data != null && !resource.data.isEmpty()) {
-                eventAdapter.setEvents(filterEventsByAudience(resource.data));
-            } else if (resource.status == Resource.Status.ERROR) {
-                eventAdapter.setEvents(filterEventsByAudience(createMockEvents()));
+        com.alumni.connect.data.repository.EventRepository eventRepo = new com.alumni.connect.data.repository.EventRepository(requireContext());
+        boolean canViewAttendees = com.alumni.connect.util.Constants.ROLE_ADMIN.equals(sessionManager.getRole()) || com.alumni.connect.util.Constants.ROLE_ALUMNI.equals(sessionManager.getRole());
+
+        eventRepo.getUserEventRegistrations(sessionManager.getUserId()).observe(getViewLifecycleOwner(), regRes -> {
+            java.util.Set<String> registeredIds = new java.util.HashSet<>();
+            if (regRes.status == Resource.Status.SUCCESS && regRes.data != null) {
+                for (com.alumni.connect.data.model.EventRegistration r : regRes.data) {
+                    if (r.getEventId() != null) registeredIds.add(r.getEventId());
+                }
             }
+
+            viewModel.getEvents().observe(getViewLifecycleOwner(), resource -> {
+                binding.swipeRefresh.setRefreshing(resource.status == Resource.Status.LOADING);
+                List<Event> displayEvents;
+                if (resource.status == Resource.Status.SUCCESS && resource.data != null && !resource.data.isEmpty()) {
+                    displayEvents = filterEventsByAudience(resource.data);
+                } else {
+                    displayEvents = filterEventsByAudience(createMockEvents());
+                }
+
+                eventAdapter.setEvents(displayEvents, registeredIds, canViewAttendees, new EventAdapter.OnEventClickListener() {
+                    @Override
+                    public void onRsvp(Event event) {
+                        if (event.getId() == null || event.getId().isEmpty()) {
+                            Toast.makeText(requireContext(), "RSVP confirmed for " + event.getTitle(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        com.alumni.connect.data.model.EventRegistration reg = new com.alumni.connect.data.model.EventRegistration();
+                        reg.setEventId(event.getId());
+                        reg.setUserId(sessionManager.getUserId());
+
+                        eventRepo.registerForEvent(reg).observe(getViewLifecycleOwner(), res -> {
+                            if (res.status == Resource.Status.SUCCESS) {
+                                Toast.makeText(requireContext(), "RSVP Confirmed for " + event.getTitle() + "!", Toast.LENGTH_SHORT).show();
+                                loadEvents();
+                            } else if (res.status == Resource.Status.ERROR) {
+                                Toast.makeText(requireContext(), "RSVP Error: " + res.message, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onViewAttendees(Event event) {
+                        com.alumni.connect.ui.events.ViewAttendeesDialogFragment.newInstance(event)
+                                .show(getChildFragmentManager(), "ViewAttendeesDialog");
+                    }
+                });
+            });
         });
     }
 
