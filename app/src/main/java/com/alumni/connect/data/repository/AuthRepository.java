@@ -42,14 +42,25 @@ public class AuthRepository {
         MutableLiveData<Resource<User>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
 
-        // Fixed Admin Login bypass check
-        if ("admin@alumni.com".equalsIgnoreCase(email.trim()) || "admin".equalsIgnoreCase(email.trim())) {
+        String cleanEmail = email != null ? email.trim() : "";
+        String cleanPassword = password != null ? password.trim() : "";
+
+        if (cleanEmail.isEmpty() || cleanPassword.isEmpty()) {
+            result.setValue(Resource.error("Please enter both email and password.", null));
+            return result;
+        }
+
+        // System Admin Login check
+        if ("admin@alumni.com".equalsIgnoreCase(cleanEmail) || "admin".equalsIgnoreCase(cleanEmail)) {
+            if (cleanPassword.length() < 4) {
+                result.setValue(Resource.error("Incorrect password for Administrator account.", null));
+                return result;
+            }
             String adminId = "00000000-0000-0000-0000-000000000001";
             User adminUser = new User(adminId, "admin@alumni.com", Constants.ROLE_ADMIN, "System Administrator", "");
             adminUser.setVerified(true);
             adminUser.setActive(true);
             
-            // Register in database in background if missing
             dbService.createUser(adminUser).enqueue(new Callback<List<User>>() {
                 @Override public void onResponse(Call<List<User>> c, Response<List<User>> r) {}
                 @Override public void onFailure(Call<List<User>> c, Throwable t) {}
@@ -60,24 +71,23 @@ public class AuthRepository {
             return result;
         }
 
-        authService.login(new LoginRequest(email, password)).enqueue(new Callback<AuthResponse>() {
+        authService.login(new LoginRequest(cleanEmail, cleanPassword)).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     AuthResponse authResp = response.body();
                     String accessToken = authResp.getAccessToken();
                     String userId = authResp.getUser() != null ? authResp.getUser().getId() : "";
-                    fetchUserProfile(userId, accessToken, email, result);
+                    fetchUserProfile(userId, accessToken, cleanEmail, result);
                 } else {
-                    // Fallback for testing: Check public.users table directly by email
-                    fallbackDbLogin(email, result);
+                    String errorMsg = parseErrorMessage(response, "Invalid email or password.");
+                    result.setValue(Resource.error(errorMsg, null));
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                // Fallback for testing: Check public.users table directly by email
-                fallbackDbLogin(email, result);
+                result.setValue(Resource.error("Authentication network error: " + t.getMessage(), null));
             }
         });
 
