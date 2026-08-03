@@ -3,6 +3,21 @@
 -- Execute this script in Supabase SQL Editor (SQL Query Runner)
 -- ========================================================
 
+-- CLEANUP: Drop all existing tables in reverse dependency order
+DROP TABLE IF EXISTS public.job_applications CASCADE;
+DROP TABLE IF EXISTS public.event_registrations CASCADE;
+DROP TABLE IF EXISTS public.saved_jobs CASCADE;
+DROP TABLE IF EXISTS public.announcements CASCADE;
+DROP TABLE IF EXISTS public.mentorship_requests CASCADE;
+DROP TABLE IF EXISTS public.connections CASCADE;
+DROP TABLE IF EXISTS public.posts CASCADE;
+DROP TABLE IF EXISTS public.events CASCADE;
+DROP TABLE IF EXISTS public.jobs CASCADE;
+DROP TABLE IF EXISTS public.student_profiles CASCADE;
+DROP TABLE IF EXISTS public.alumni_profiles CASCADE;
+DROP TABLE IF EXISTS public.admin_profiles CASCADE;
+DROP TABLE IF EXISTS public.users CASCADE;
+
 -- 1. Base Users Table (stores profile info linked to auth.users)
 CREATE TABLE IF NOT EXISTS public.users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
