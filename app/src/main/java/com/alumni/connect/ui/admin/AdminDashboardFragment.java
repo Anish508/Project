@@ -54,13 +54,16 @@ public class AdminDashboardFragment extends Fragment {
 
         viewModel.publishAnnouncement(post).observe(getViewLifecycleOwner(), resource -> {
             if (resource.status == Resource.Status.SUCCESS) {
+                com.alumni.connect.util.NotificationHelper.showNotification(
+                        requireContext(),
+                        "Official Announcement Broadcast",
+                        "📢 " + title
+                );
                 Toast.makeText(requireContext(), "Broadcast published successfully!", Toast.LENGTH_SHORT).show();
                 binding.etPostTitle.setText("");
                 binding.etPostContent.setText("");
             } else if (resource.status == Resource.Status.ERROR) {
-                Toast.makeText(requireContext(), "Announcement broadcast published!", Toast.LENGTH_SHORT).show();
-                binding.etPostTitle.setText("");
-                binding.etPostContent.setText("");
+                Toast.makeText(requireContext(), "Error publishing broadcast: " + resource.message, Toast.LENGTH_LONG).show();
             }
         });
     }

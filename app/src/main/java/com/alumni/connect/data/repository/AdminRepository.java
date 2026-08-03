@@ -79,11 +79,15 @@ public class AdminRepository {
         dbService.updateUser("eq." + userId, updates).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                result.setValue(Resource.success("Updated successfully"));
+                if (response.isSuccessful()) {
+                    result.setValue(Resource.success("Updated successfully"));
+                } else {
+                    result.setValue(Resource.error("Update failed: HTTP " + response.code(), null));
+                }
             }
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-                result.setValue(Resource.error("Update failed", null));
+                result.setValue(Resource.error("Update failed: " + t.getMessage(), null));
             }
         });
         return result;
@@ -95,11 +99,15 @@ public class AdminRepository {
         dbService.deleteUser("eq." + userId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                result.setValue(Resource.success("User deleted"));
+                if (response.isSuccessful()) {
+                    result.setValue(Resource.success("User deleted"));
+                } else {
+                    result.setValue(Resource.error("Delete failed: HTTP " + response.code(), null));
+                }
             }
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                result.setValue(Resource.error("Delete failed", null));
+                result.setValue(Resource.error("Delete failed: " + t.getMessage(), null));
             }
         });
         return result;
@@ -137,7 +145,7 @@ public class AdminRepository {
             }
             @Override
             public void onFailure(Call<List<Post>> call, Throwable t) {
-                result.setValue(Resource.error("Network error", null));
+                result.setValue(Resource.error("Network error: " + t.getMessage(), null));
             }
         });
         return result;
@@ -149,11 +157,15 @@ public class AdminRepository {
         dbService.deletePost("eq." + postId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                result.setValue(Resource.success("Post deleted"));
+                if (response.isSuccessful()) {
+                    result.setValue(Resource.success("Post deleted"));
+                } else {
+                    result.setValue(Resource.error("Delete failed: HTTP " + response.code(), null));
+                }
             }
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                result.setValue(Resource.error("Delete failed", null));
+                result.setValue(Resource.error("Delete failed: " + t.getMessage(), null));
             }
         });
         return result;
@@ -173,7 +185,7 @@ public class AdminRepository {
             }
             @Override
             public void onFailure(Call<List<Job>> call, Throwable t) {
-                result.setValue(Resource.error("Network error", null));
+                result.setValue(Resource.error("Network error: " + t.getMessage(), null));
             }
         });
         return result;
@@ -185,11 +197,15 @@ public class AdminRepository {
         dbService.deleteJob("eq." + jobId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                result.setValue(Resource.success("Job deleted"));
+                if (response.isSuccessful()) {
+                    result.setValue(Resource.success("Job deleted"));
+                } else {
+                    result.setValue(Resource.error("Delete failed: HTTP " + response.code(), null));
+                }
             }
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                result.setValue(Resource.error("Delete failed", null));
+                result.setValue(Resource.error("Delete failed: " + t.getMessage(), null));
             }
         });
         return result;
@@ -211,7 +227,7 @@ public class AdminRepository {
             }
             @Override
             public void onFailure(Call<List<Event>> call, Throwable t) {
-                result.setValue(Resource.error("Network error", null));
+                result.setValue(Resource.error("Network error: " + t.getMessage(), null));
             }
         });
         return result;
@@ -223,11 +239,15 @@ public class AdminRepository {
         dbService.deleteEvent("eq." + eventId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                result.setValue(Resource.success("Event deleted"));
+                if (response.isSuccessful()) {
+                    result.setValue(Resource.success("Event deleted"));
+                } else {
+                    result.setValue(Resource.error("Delete failed: HTTP " + response.code(), null));
+                }
             }
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                result.setValue(Resource.error("Delete failed", null));
+                result.setValue(Resource.error("Delete failed: " + t.getMessage(), null));
             }
         });
         return result;
@@ -236,14 +256,23 @@ public class AdminRepository {
     public LiveData<Resource<Event>> createEvent(Event event) {
         MutableLiveData<Resource<Event>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
+
+        if (event.getCreatedBy() != null && event.getCreatedBy().trim().isEmpty()) {
+            event.setCreatedBy(null);
+        }
+
         dbService.createEvent(event).enqueue(new Callback<List<Event>>() {
             @Override
             public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
-                result.setValue(Resource.success(event));
+                if (response.isSuccessful()) {
+                    result.setValue(Resource.success(event));
+                } else {
+                    result.setValue(Resource.error("Failed to create event: HTTP " + response.code(), null));
+                }
             }
             @Override
             public void onFailure(Call<List<Event>> call, Throwable t) {
-                result.setValue(Resource.error("Failed to create event", null));
+                result.setValue(Resource.error("Failed to create event: " + t.getMessage(), null));
             }
         });
         return result;
@@ -254,14 +283,40 @@ public class AdminRepository {
     public LiveData<Resource<Announcement>> createAnnouncement(Announcement announcement) {
         MutableLiveData<Resource<Announcement>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
+
+        String adminId = announcement.getAdminId();
+        if (adminId != null && adminId.trim().isEmpty()) {
+            announcement.setAdminId(null);
+        }
+
         dbService.createAnnouncement(announcement).enqueue(new Callback<List<Announcement>>() {
             @Override
             public void onResponse(Call<List<Announcement>> call, Response<List<Announcement>> response) {
-                result.setValue(Resource.success(announcement));
+                if (response.isSuccessful()) {
+                    // Sync into posts table so announcement appears across home feeds & moderation
+                    Post post = new Post();
+                    post.setTitle(announcement.getTitle());
+                    post.setContent(announcement.getMessage());
+                    post.setPostType("announcement");
+                    post.setAuthorId(announcement.getAdminId());
+                    
+                    dbService.createPost(post).enqueue(new Callback<List<Post>>() {
+                        @Override
+                        public void onResponse(Call<List<Post>> c, Response<List<Post>> r) {
+                            result.setValue(Resource.success(announcement));
+                        }
+                        @Override
+                        public void onFailure(Call<List<Post>> c, Throwable t) {
+                            result.setValue(Resource.success(announcement));
+                        }
+                    });
+                } else {
+                    result.setValue(Resource.error("Failed to broadcast announcement: HTTP " + response.code(), null));
+                }
             }
             @Override
             public void onFailure(Call<List<Announcement>> call, Throwable t) {
-                result.setValue(Resource.error("Failed to create announcement", null));
+                result.setValue(Resource.error("Failed to broadcast announcement: " + t.getMessage(), null));
             }
         });
         return result;
@@ -281,7 +336,7 @@ public class AdminRepository {
             }
             @Override
             public void onFailure(Call<List<Announcement>> call, Throwable t) {
-                result.setValue(Resource.error("Network error", null));
+                result.setValue(Resource.error("Network error: " + t.getMessage(), null));
             }
         });
         return result;

@@ -115,17 +115,16 @@ public class CreatePostFragment extends Fragment {
 
     private void doPublishPost(Post post) {
         postRepository.createPost(post).observe(getViewLifecycleOwner(), resource -> {
-            com.alumni.connect.util.NotificationHelper.showNotification(
-                    requireContext(),
-                    "New Community Broadcast",
-                    "📢 " + post.getTitle()
-            );
             if (resource.status == Resource.Status.SUCCESS) {
+                com.alumni.connect.util.NotificationHelper.showNotification(
+                        requireContext(),
+                        "New Community Broadcast",
+                        "📢 " + post.getTitle()
+                );
                 Toast.makeText(requireContext(), "Post published successfully!", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(requireView()).popBackStack();
             } else if (resource.status == Resource.Status.ERROR) {
-                Toast.makeText(requireContext(), "Post published!", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(requireView()).popBackStack();
+                Toast.makeText(requireContext(), "Failed to publish post: " + resource.message, Toast.LENGTH_LONG).show();
             }
         });
     }

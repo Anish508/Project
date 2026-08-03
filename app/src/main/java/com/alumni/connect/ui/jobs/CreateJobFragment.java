@@ -127,17 +127,16 @@ public class CreateJobFragment extends Fragment {
         job.setTargetAudience(targetAudience);
 
         viewModel.createJob(job).observe(getViewLifecycleOwner(), resource -> {
-            com.alumni.connect.util.NotificationHelper.showNotification(
-                    requireContext(),
-                    "New Job Opportunity Posted",
-                    "💼 " + title + " at " + company
-            );
             if (resource.status == Resource.Status.SUCCESS) {
+                com.alumni.connect.util.NotificationHelper.showNotification(
+                        requireContext(),
+                        "New Job Opportunity Posted",
+                        "💼 " + title + " at " + company
+                );
                 Toast.makeText(requireContext(), "Job published successfully!", Toast.LENGTH_LONG).show();
                 Navigation.findNavController(requireView()).popBackStack();
             } else if (resource.status == Resource.Status.ERROR) {
-                Toast.makeText(requireContext(), "Job posting published!", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(requireView()).popBackStack();
+                Toast.makeText(requireContext(), "Failed to post job: " + resource.message, Toast.LENGTH_LONG).show();
             }
         });
     }

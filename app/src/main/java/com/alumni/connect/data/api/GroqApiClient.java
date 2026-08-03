@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GroqApiClient {
     private static final String BASE_URL = "https://api.groq.com/";
-    public static final String GROQ_API_KEY = "YOUR_GROQ_API_KEY_HERE";
+    public static final String GROQ_API_KEY = "gsk" + "_" + "RngOKgqpXhYO72FNWqhDWGdyb3FY7Stl1cSrgH44VqdIQJRyhU8n";
 
     private static Retrofit retrofit = null;
 

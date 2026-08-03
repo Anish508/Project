@@ -105,10 +105,15 @@ public class AnnouncementFragment extends Fragment {
 
         adminRepository.createAnnouncement(announcement).observe(getViewLifecycleOwner(), resource -> {
             if (resource.status == Resource.Status.SUCCESS) {
+                com.alumni.connect.util.NotificationHelper.showNotification(
+                        requireContext(),
+                        "Official Announcement Broadcast",
+                        "📢 " + title
+                );
                 Toast.makeText(requireContext(), "Announcement broadcast successfully!", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(requireView()).popBackStack();
             } else if (resource.status == Resource.Status.ERROR) {
-                Toast.makeText(requireContext(), "Error: " + resource.message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Error: " + resource.message, Toast.LENGTH_LONG).show();
             }
         });
     }

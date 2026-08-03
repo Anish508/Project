@@ -50,13 +50,21 @@ public class PostRepository {
         MutableLiveData<Resource<Post>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
 
+        if (post.getAuthorId() != null && post.getAuthorId().trim().isEmpty()) {
+            post.setAuthorId(null);
+        }
+
         dbService.createPost(post).enqueue(new Callback<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                    result.setValue(Resource.success(response.body().get(0)));
+                if (response.isSuccessful()) {
+                    if (response.body() != null && !response.body().isEmpty()) {
+                        result.setValue(Resource.success(response.body().get(0)));
+                    } else {
+                        result.setValue(Resource.success(post));
+                    }
                 } else {
-                    result.setValue(Resource.error("Failed to publish post.", null));
+                    result.setValue(Resource.error("Failed to publish post: HTTP " + response.code(), null));
                 }
             }
 

@@ -76,11 +76,15 @@ public class CreateEventFragment extends Fragment {
 
         adminRepository.createEvent(event).observe(getViewLifecycleOwner(), resource -> {
             if (resource.status == Resource.Status.SUCCESS) {
+                com.alumni.connect.util.NotificationHelper.showNotification(
+                        requireContext(),
+                        "New Campus Event Scheduled",
+                        "📅 " + title
+                );
                 Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(requireView()).popBackStack();
             } else if (resource.status == Resource.Status.ERROR) {
-                Toast.makeText(requireContext(), "Event published!", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(requireView()).popBackStack();
+                Toast.makeText(requireContext(), "Failed to create event: " + resource.message, Toast.LENGTH_LONG).show();
             }
         });
     }
