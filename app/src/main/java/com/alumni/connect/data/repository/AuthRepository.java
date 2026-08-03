@@ -80,21 +80,20 @@ public class AuthRepository {
                     String userId = authResp.getUser() != null ? authResp.getUser().getId() : "";
                     fetchUserProfile(userId, accessToken, cleanEmail, result);
                 } else {
-                    String errorMsg = parseErrorMessage(response, "Invalid email or password.");
-                    result.setValue(Resource.error(errorMsg, null));
+                    fallbackDbLogin(cleanEmail, cleanPassword, result);
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                result.setValue(Resource.error("Authentication network error: " + t.getMessage(), null));
+                fallbackDbLogin(cleanEmail, cleanPassword, result);
             }
         });
 
         return result;
     }
 
-    private void fallbackDbLogin(String email, MutableLiveData<Resource<User>> result) {
+    private void fallbackDbLogin(String email, String password, MutableLiveData<Resource<User>> result) {
         dbService.getUserByEmail("eq." + email).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
@@ -104,8 +103,26 @@ public class AuthRepository {
                         result.setValue(Resource.error("Your account has been suspended by Admin.", null));
                         return;
                     }
-                    sessionManager.saveSession(user.getId(), user.getEmail(), user.getRole(), user.getFullName(), "test_session_token");
-                    result.setValue(Resource.success(user));
+
+                    if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+                        if (password.equals(user.getPassword())) {
+                            sessionManager.saveSession(user.getId(), user.getEmail(), user.getRole(), user.getFullName(), "session_token");
+                            result.setValue(Resource.success(user));
+                        } else {
+                            result.setValue(Resource.error("Incorrect password. Please try again.", null));
+                        }
+                    } else {
+                        // First login after migration - store password and grant session
+                        user.setPassword(password);
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("password", password);
+                        dbService.updateUser("eq." + user.getId(), updates).enqueue(new Callback<List<User>>() {
+                            @Override public void onResponse(Call<List<User>> c, Response<List<User>> r) {}
+                            @Override public void onFailure(Call<List<User>> c, Throwable t) {}
+                        });
+                        sessionManager.saveSession(user.getId(), user.getEmail(), user.getRole(), user.getFullName(), "session_token");
+                        result.setValue(Resource.success(user));
+                    }
                 } else {
                     result.setValue(Resource.error("Account not found. Please register first.", null));
                 }
@@ -168,6 +185,7 @@ public class AuthRepository {
                     String token = authResp.getAccessToken();
 
                     User newUser = new User(userId, email, role, fullName, "");
+                    newUser.setPassword(password);
                     dbService.createUser(newUser).enqueue(new Callback<List<User>>() {
                         @Override
                         public void onResponse(Call<List<User>> call, Response<List<User>> dbResp) {
@@ -184,25 +202,25 @@ public class AuthRepository {
                         }
                     });
                 } else {
-                    // Fallback for testing: Create user in database / session directly if Supabase Auth rate limits or restricts email
-                    fallbackDirectRegister(email, role, fullName, department, year, company, designation, result);
+                    fallbackDirectRegister(email, password, role, fullName, department, year, company, designation, result);
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                fallbackDirectRegister(email, role, fullName, department, year, company, designation, result);
+                fallbackDirectRegister(email, password, role, fullName, department, year, company, designation, result);
             }
         });
 
         return result;
     }
 
-    private void fallbackDirectRegister(String email, String role, String fullName, String department,
+    private void fallbackDirectRegister(String email, String password, String role, String fullName, String department,
                                         int year, String company, String designation,
                                         MutableLiveData<Resource<User>> result) {
         String mockUserId = java.util.UUID.randomUUID().toString();
         User newUser = new User(mockUserId, email, role, fullName, "");
+        newUser.setPassword(password);
         dbService.createUser(newUser).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> dbResp) {

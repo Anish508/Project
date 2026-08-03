@@ -21,6 +21,9 @@ public class User {
     @SerializedName("phone")
     private String phone;
 
+    @SerializedName("password")
+    private String password;
+
     @SerializedName("is_verified")
     private boolean isVerified = true;
 
@@ -57,6 +60,9 @@ public class User {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
     public boolean isVerified() { return isVerified; }
     public void setVerified(boolean verified) { isVerified = verified; }

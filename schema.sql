@@ -7,6 +7,7 @@
 CREATE TABLE IF NOT EXISTS public.users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT UNIQUE NOT NULL,
+    password TEXT,
     role TEXT NOT NULL CHECK (role IN ('student', 'alumni', 'admin')),
     full_name TEXT NOT NULL,
     avatar_url TEXT,
