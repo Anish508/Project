@@ -49,6 +49,20 @@ public class ApplyJobDialogFragment extends BottomSheetDialogFragment {
         repository = new JobApplicationRepository(requireContext());
         sessionManager = new SessionManager(requireContext());
 
+        // Restrictions: Job poster & Admin cannot apply to the job
+        String currentUserId = sessionManager.getUserId();
+        String userRole = sessionManager.getRole();
+        if (com.alumni.connect.util.Constants.ROLE_ADMIN.equalsIgnoreCase(userRole)) {
+            Toast.makeText(requireContext(), "Admins cannot apply to job postings.", Toast.LENGTH_SHORT).show();
+            dismiss();
+            return;
+        }
+        if (job.getPostedBy() != null && !currentUserId.isEmpty() && job.getPostedBy().equalsIgnoreCase(currentUserId)) {
+            Toast.makeText(requireContext(), "You posted this job listing and cannot apply to it.", Toast.LENGTH_LONG).show();
+            dismiss();
+            return;
+        }
+
         binding.tvJobTitleHeader.setText("Apply for " + job.getTitle());
         binding.tvCompanySubheader.setText(job.getCompany() + " • " + job.getLocation());
 

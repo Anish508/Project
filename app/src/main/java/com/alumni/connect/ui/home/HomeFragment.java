@@ -64,7 +64,13 @@ public class HomeFragment extends Fragment {
         viewModel.getPosts().observe(getViewLifecycleOwner(), resource -> {
             binding.swipeRefresh.setRefreshing(resource.status == Resource.Status.LOADING);
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
-                adapter.setPosts(resource.data);
+                List<Post> publicPosts = new ArrayList<>();
+                for (Post p : resource.data) {
+                    if (p.getPostType() == null || !p.getPostType().toLowerCase().startsWith("chat")) {
+                        publicPosts.add(p);
+                    }
+                }
+                adapter.setPosts(publicPosts);
             } else if (resource.status == Resource.Status.ERROR) {
                 List<Post> welcomePosts = new ArrayList<>();
                 Post p1 = new Post();

@@ -135,7 +135,7 @@ public interface SupabaseDbService {
     Call<List<MentorshipRequest>> getAllMentorshipRequests();
 
     // ==================== POSTS ====================
-    @GET("rest/v1/posts?order=created_at.desc")
+    @GET("rest/v1/posts?post_type=not.like.chat_%25&order=created_at.desc")
     Call<List<Post>> getPosts();
 
     // Chat messages are stored as posts with post_type = "chat_<requestId>"

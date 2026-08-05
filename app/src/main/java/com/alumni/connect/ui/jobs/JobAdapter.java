@@ -64,7 +64,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
         // Determine if this is the current user's own job posting
         boolean isOwnJob = !currentUserId.isEmpty()
                 && job.getPostedBy() != null
-                && job.getPostedBy().equals(currentUserId);
+                && job.getPostedBy().equalsIgnoreCase(currentUserId);
 
         // Admin users cannot apply to any job
         boolean isAdmin = "admin".equalsIgnoreCase(userRole);
@@ -104,8 +104,8 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
         }
 
         if (holder.btnAiMatch != null) {
-            // AI Match only shown to non-admin users for jobs they can apply to
-            if (isAdmin) {
+            // AI Match only shown to users for jobs they can apply to
+            if (isAdmin || isOwnJob) {
                 holder.btnAiMatch.setVisibility(View.GONE);
             } else {
                 holder.btnAiMatch.setVisibility(View.VISIBLE);

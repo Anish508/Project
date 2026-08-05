@@ -138,7 +138,13 @@ public class AdminRepository {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    result.setValue(Resource.success(response.body()));
+                    List<Post> publicPosts = new java.util.ArrayList<>();
+                    for (Post p : response.body()) {
+                        if (p.getPostType() == null || !p.getPostType().toLowerCase().startsWith("chat")) {
+                            publicPosts.add(p);
+                        }
+                    }
+                    result.setValue(Resource.success(publicPosts));
                 } else {
                     result.setValue(Resource.error("Failed to load posts", null));
                 }
