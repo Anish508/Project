@@ -21,7 +21,7 @@ public class JobApplicationAdapter extends RecyclerView.Adapter<JobApplicationAd
     private List<JobApplication> list = new ArrayList<>();
 
     public void setApplications(List<JobApplication> list) {
-        this.list = list;
+        this.list = list != null ? list : new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -34,7 +34,7 @@ public class JobApplicationAdapter extends RecyclerView.Adapter<JobApplicationAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(list.get(position));
+        holder.bind(list.get(position), position + 1);
     }
 
     @Override
@@ -43,31 +43,60 @@ public class JobApplicationAdapter extends RecyclerView.Adapter<JobApplicationAd
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvAvatar;
         private final TextView tvName;
         private final TextView tvEmailPhone;
+        private final TextView tvAppliedDate;
         private final TextView tvCover;
         private final TextView tvResume;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            tvAvatar = itemView.findViewById(R.id.tvApplicantAvatar);
             tvName = itemView.findViewById(R.id.tvApplicantName);
             tvEmailPhone = itemView.findViewById(R.id.tvApplicantEmailPhone);
+            tvAppliedDate = itemView.findViewById(R.id.tvAppliedDate);
             tvCover = itemView.findViewById(R.id.tvCoverNote);
             tvResume = itemView.findViewById(R.id.tvResumeLink);
         }
 
-        public void bind(JobApplication app) {
-            tvName.setText(app.getApplicantName());
-            String emailPhone = app.getApplicantEmail() + (app.getPhone() != null && !app.getPhone().isEmpty() ? " • " + app.getPhone() : "");
+        public void bind(JobApplication app, int index) {
+            String name = app.getApplicantName() != null && !app.getApplicantName().isEmpty()
+                    ? app.getApplicantName() : "Applicant #" + index;
+            tvName.setText(name);
+
+            // Avatar initial
+            if (tvAvatar != null) {
+                tvAvatar.setText(name.substring(0, 1).toUpperCase());
+            }
+
+            // Email + Phone
+            String emailPhone = app.getApplicantEmail() != null ? app.getApplicantEmail() : "";
+            if (app.getPhone() != null && !app.getPhone().isEmpty()) {
+                emailPhone += " • " + app.getPhone();
+            }
             tvEmailPhone.setText(emailPhone);
 
+            // Application date
+            if (tvAppliedDate != null) {
+                String raw = app.getCreatedAt();
+                if (raw != null && raw.length() >= 10) {
+                    tvAppliedDate.setText("Applied: " + raw.substring(0, 10));
+                    tvAppliedDate.setVisibility(View.VISIBLE);
+                } else {
+                    tvAppliedDate.setVisibility(View.GONE);
+                }
+            }
+
+            // Cover note
             if (app.getCoverNote() != null && !app.getCoverNote().isEmpty()) {
                 tvCover.setVisibility(View.VISIBLE);
-                tvCover.setText("Note: " + app.getCoverNote());
+                tvCover.setText("💬 " + app.getCoverNote());
             } else {
                 tvCover.setVisibility(View.GONE);
             }
 
+            // Resume link
             if (app.getResumeUrl() != null && !app.getResumeUrl().isEmpty()) {
                 tvResume.setVisibility(View.VISIBLE);
                 tvResume.setText("📄 View Resume / Portfolio");

@@ -232,6 +232,142 @@
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
+        <!-- KPI Cards Row 4 – Event RSVPs -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:id="@+id/tvTotalRsvps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/secondary" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total RSVPs"
+                        android:textSize="12sp"
+                        android:textColor="@color/on_surface_variant" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:id="@+id/tvTotalAnnouncements"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/warning" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Announcements"
+                        android:textSize="12sp"
+                        android:textColor="@color/on_surface_variant" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- KPI Cards Row 5 – Applications & Mentorship -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:id="@+id/tvTotalApplications"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:textColor="#7C3AED" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Job Applications"
+                        android:textSize="12sp"
+                        android:textColor="@color/on_surface_variant" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:id="@+id/tvTotalMentorships"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:textColor="#0891B2" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mentorships"
+                        android:textSize="12sp"
+                        android:textColor="@color/on_surface_variant" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
         <!-- Quick Actions -->
         <TextView
             android:layout_width="match_parent"
@@ -271,6 +407,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Send Announcement"
+            android:layout_marginBottom="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnManageEvents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Manage Events"
             android:layout_marginBottom="8dp"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 

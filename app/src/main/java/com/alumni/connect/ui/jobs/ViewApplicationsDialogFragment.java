@@ -10,14 +10,12 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.alumni.connect.data.model.Job;
-import com.alumni.connect.data.model.JobApplication;
 import com.alumni.connect.data.repository.JobApplicationRepository;
 import com.alumni.connect.databinding.DialogViewApplicationsBinding;
 import com.alumni.connect.util.Resource;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ViewApplicationsDialogFragment extends BottomSheetDialogFragment {
     private DialogViewApplicationsBinding binding;
@@ -47,7 +45,16 @@ public class ViewApplicationsDialogFragment extends BottomSheetDialogFragment {
         }
 
         repository = new JobApplicationRepository(requireContext());
-        binding.tvJobApplicationsTitle.setText("Applicants for " + job.getTitle());
+
+        String jobTitle = job.getTitle() != null ? job.getTitle() : "This Job";
+        binding.tvJobApplicationsTitle.setText(jobTitle);
+        binding.tvJobApplicationsSubtitle.setText("Applicants for " + job.getCompany());
+
+        // Initial state
+        binding.pbApplicationsLoading.setVisibility(View.VISIBLE);
+        binding.rvJobApplications.setVisibility(View.GONE);
+        binding.tvEmptyApplications.setVisibility(View.GONE);
+        binding.tvApplicantCount.setText("Loading…");
 
         adapter = new JobApplicationAdapter();
         binding.rvJobApplications.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -60,17 +67,31 @@ public class ViewApplicationsDialogFragment extends BottomSheetDialogFragment {
 
     private void loadApplications() {
         if (job.getId() == null || job.getId().isEmpty()) {
+            binding.pbApplicationsLoading.setVisibility(View.GONE);
             binding.tvEmptyApplications.setVisibility(View.VISIBLE);
-            adapter.setApplications(new ArrayList<>());
+            binding.tvApplicantCount.setText("0 Applicants");
             return;
         }
 
         repository.getApplicationsForJob(job.getId()).observe(getViewLifecycleOwner(), resource -> {
+            if (resource.status == Resource.Status.LOADING) {
+                binding.pbApplicationsLoading.setVisibility(View.VISIBLE);
+                binding.tvApplicantCount.setText("Loading…");
+                return;
+            }
+
+            binding.pbApplicationsLoading.setVisibility(View.GONE);
+
             if (resource.status == Resource.Status.SUCCESS && resource.data != null && !resource.data.isEmpty()) {
+                int count = resource.data.size();
+                binding.tvApplicantCount.setText(count + (count == 1 ? " Applicant" : " Applicants"));
                 binding.tvEmptyApplications.setVisibility(View.GONE);
+                binding.rvJobApplications.setVisibility(View.VISIBLE);
                 adapter.setApplications(resource.data);
             } else {
+                binding.tvApplicantCount.setText("0 Applicants");
                 binding.tvEmptyApplications.setVisibility(View.VISIBLE);
+                binding.rvJobApplications.setVisibility(View.GONE);
                 adapter.setApplications(new ArrayList<>());
             }
         });

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alumni.connect.R;
 import com.alumni.connect.data.model.Event;
 import com.alumni.connect.data.repository.AdminRepository;
+import com.alumni.connect.data.repository.EventRepository;
 import com.alumni.connect.databinding.FragmentEventManagementBinding;
 import com.alumni.connect.util.Resource;
 
@@ -27,6 +28,7 @@ import java.util.List;
 public class EventManagementFragment extends Fragment {
     private FragmentEventManagementBinding binding;
     private AdminRepository adminRepository;
+    private EventRepository eventRepository;
     private AdminEventAdapter adapter;
 
     @Nullable
@@ -40,6 +42,7 @@ public class EventManagementFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         adminRepository = new AdminRepository(requireContext());
+        eventRepository = new EventRepository(requireContext());
 
         adapter = new AdminEventAdapter();
         binding.rvEvents.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -47,7 +50,7 @@ public class EventManagementFragment extends Fragment {
 
         binding.swipeRefresh.setOnRefreshListener(this::loadEvents);
 
-        binding.fabAddEvent.setOnClickListener(v -> 
+        binding.fabAddEvent.setOnClickListener(v ->
             Navigation.findNavController(requireView()).navigate(R.id.action_events_to_create)
         );
 
@@ -112,7 +115,25 @@ public class EventManagementFragment extends Fragment {
             holder.tvDateTime.setText(event.getEventDate() + " at " + event.getEventTime());
             holder.tvLocation.setText(event.getLocationDetails() + " (" + event.getLocationType() + ")");
             holder.tvDescription.setText(event.getDescription());
-            
+
+            // Show RSVP count chip
+            if (holder.tvRsvpCount != null) {
+                holder.tvRsvpCount.setVisibility(View.VISIBLE);
+                holder.tvRsvpCount.setText("👥 Loading…");
+                if (event.getId() != null && !event.getId().isEmpty()) {
+                    eventRepository.getEventRegistrations(event.getId()).observe(getViewLifecycleOwner(), resource -> {
+                        if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                            int count = resource.data.size();
+                            holder.tvRsvpCount.setText("👥 " + count + (count == 1 ? " Registered" : " Registered"));
+                        } else if (resource.status != Resource.Status.LOADING) {
+                            holder.tvRsvpCount.setText("👥 0 Registered");
+                        }
+                    });
+                } else {
+                    holder.tvRsvpCount.setText("👥 0 Registered");
+                }
+            }
+
             holder.btnRSVP.setText("Delete Event");
             holder.btnRSVP.setBackgroundColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.error));
             holder.btnRSVP.setOnClickListener(v -> {
@@ -150,7 +171,7 @@ public class EventManagementFragment extends Fragment {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvTitle, tvDateTime, tvLocation, tvDescription;
+            TextView tvTitle, tvDateTime, tvLocation, tvDescription, tvRsvpCount;
             Button btnRSVP, btnEdit;
             View btnViewAttendees;
 
@@ -160,6 +181,7 @@ public class EventManagementFragment extends Fragment {
                 tvDateTime = itemView.findViewById(R.id.tvEventDateTime);
                 tvLocation = itemView.findViewById(R.id.tvLocation);
                 tvDescription = itemView.findViewById(R.id.tvEventDescription);
+                tvRsvpCount = itemView.findViewById(R.id.tvRsvpCount);
                 btnRSVP = itemView.findViewById(R.id.btnRSVP);
                 btnEdit = itemView.findViewById(R.id.btnEditEvent);
                 btnViewAttendees = itemView.findViewById(R.id.btnViewAttendees);

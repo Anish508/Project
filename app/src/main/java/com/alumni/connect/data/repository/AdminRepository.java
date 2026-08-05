@@ -368,4 +368,84 @@ public class AdminRepository {
 
         return result;
     }
+
+    // ==================== EVENT REGISTRATIONS (ADMIN) ====================
+
+    public LiveData<Resource<Integer>> getTotalRsvpCount() {
+        MutableLiveData<Resource<Integer>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        dbService.getAllEventRegistrations().enqueue(new Callback<List<com.alumni.connect.data.model.EventRegistration>>() {
+            @Override
+            public void onResponse(Call<List<com.alumni.connect.data.model.EventRegistration>> call,
+                                   Response<List<com.alumni.connect.data.model.EventRegistration>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.setValue(Resource.success(response.body().size()));
+                } else {
+                    result.setValue(Resource.error("Failed to load RSVP count", 0));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<com.alumni.connect.data.model.EventRegistration>> call, Throwable t) {
+                result.setValue(Resource.error("Network error: " + t.getMessage(), 0));
+            }
+        });
+
+        return result;
+    }
+
+    // ==================== JOB APPLICATIONS (ADMIN) ====================
+
+    public LiveData<Resource<Integer>> getTotalApplicationsCount() {
+        MutableLiveData<Resource<Integer>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        dbService.getAllJobApplications().enqueue(new Callback<List<com.alumni.connect.data.model.JobApplication>>() {
+            @Override
+            public void onResponse(Call<List<com.alumni.connect.data.model.JobApplication>> call,
+                                   Response<List<com.alumni.connect.data.model.JobApplication>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.setValue(Resource.success(response.body().size()));
+                } else {
+                    result.setValue(Resource.error("Failed to load application count", 0));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<com.alumni.connect.data.model.JobApplication>> call, Throwable t) {
+                result.setValue(Resource.error("Network error: " + t.getMessage(), 0));
+            }
+        });
+
+        return result;
+    }
+
+    // ==================== MENTORSHIP (ADMIN) ====================
+
+    public LiveData<Resource<Integer>> getTotalMentorshipCount() {
+        MutableLiveData<Resource<Integer>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        dbService.getAllMentorshipRequests().enqueue(new Callback<List<com.alumni.connect.data.model.MentorshipRequest>>() {
+            @Override
+            public void onResponse(Call<List<com.alumni.connect.data.model.MentorshipRequest>> call,
+                                   Response<List<com.alumni.connect.data.model.MentorshipRequest>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.setValue(Resource.success(response.body().size()));
+                } else {
+                    result.setValue(Resource.error("Failed to load mentorship count", 0));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<com.alumni.connect.data.model.MentorshipRequest>> call, Throwable t) {
+                result.setValue(Resource.error("Network error: " + t.getMessage(), 0));
+            }
+        });
+
+        return result;
+    }
 }
+
+

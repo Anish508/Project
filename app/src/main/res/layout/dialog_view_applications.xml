@@ -1,19 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="20dp"
     android:background="@color/surface">
 
-    <TextView
-        android:id="@+id/tvJobApplicationsTitle"
+    <!-- Header Row: Title + Count Badge -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Job Applicants"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/on_surface" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvJobApplicationsTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Job Applicants"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/on_surface" />
+
+            <TextView
+                android:id="@+id/tvJobApplicationsSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="People who applied for this position"
+                android:textSize="12sp"
+                android:textColor="@color/on_surface_variant"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- Applicant Count Badge -->
+        <TextView
+            android:id="@+id/tvApplicantCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:text="0 Applicants"
+            android:textColor="@color/primary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- Loading indicator -->
+    <ProgressBar
+        android:id="@+id/pbApplicationsLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/tvEmptyApplications"
@@ -28,8 +76,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvJobApplications"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
-        android:layout_marginTop="12dp" />
+        android:layout_height="360dp"
+        android:layout_marginTop="12dp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btnCloseApplications"

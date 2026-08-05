@@ -14,7 +14,9 @@ import com.alumni.connect.R;
 import com.alumni.connect.data.model.Event;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
     public interface OnEventClickListener {
@@ -23,19 +25,26 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     private List<Event> events = new ArrayList<>();
-    private java.util.Set<String> registeredEventIds = new java.util.HashSet<>();
+    private Set<String> registeredEventIds = new HashSet<>();
     private OnEventClickListener listener;
     private boolean showAttendeesOption = false;
+    // Admin users cannot RSVP to events
+    private boolean isAdmin = false;
 
     public void setEvents(List<Event> events) {
-        setEvents(events, new java.util.HashSet<>(), false, null);
+        setEvents(events, new HashSet<>(), false, null);
     }
 
-    public void setEvents(List<Event> events, java.util.Set<String> registeredEventIds, boolean showAttendeesOption, OnEventClickListener listener) {
+    public void setEvents(List<Event> events, Set<String> registeredEventIds, boolean showAttendeesOption, OnEventClickListener listener) {
+        setEvents(events, registeredEventIds, showAttendeesOption, listener, false);
+    }
+
+    public void setEvents(List<Event> events, Set<String> registeredEventIds, boolean showAttendeesOption, OnEventClickListener listener, boolean isAdmin) {
         this.events = events != null ? events : new ArrayList<>();
-        this.registeredEventIds = registeredEventIds != null ? registeredEventIds : new java.util.HashSet<>();
+        this.registeredEventIds = registeredEventIds != null ? registeredEventIds : new HashSet<>();
         this.showAttendeesOption = showAttendeesOption;
         this.listener = listener;
+        this.isAdmin = isAdmin;
         notifyDataSetChanged();
     }
 
@@ -56,10 +65,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         boolean isRegistered = event.getId() != null && registeredEventIds.contains(event.getId());
 
-        if (isRegistered) {
+        if (isAdmin) {
+            // Admin: hide RSVP, show "Admin View" badge
+            holder.btnRSVP.setVisibility(View.GONE);
+            if (holder.tvAdminEventLabel != null) {
+                holder.tvAdminEventLabel.setVisibility(View.VISIBLE);
+                holder.tvAdminEventLabel.setText("🔒 Admin View");
+            }
+        } else if (isRegistered) {
+            if (holder.tvAdminEventLabel != null) holder.tvAdminEventLabel.setVisibility(View.GONE);
+            holder.btnRSVP.setVisibility(View.VISIBLE);
             holder.btnRSVP.setText("RSVP Confirmed ✓");
             holder.btnRSVP.setEnabled(false);
         } else {
+            if (holder.tvAdminEventLabel != null) holder.tvAdminEventLabel.setVisibility(View.GONE);
+            holder.btnRSVP.setVisibility(View.VISIBLE);
             holder.btnRSVP.setText("RSVP / Register");
             holder.btnRSVP.setEnabled(true);
             holder.btnRSVP.setOnClickListener(v -> {
@@ -91,7 +111,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvDateTime, tvLocation, tvDescription;
+        TextView tvTitle, tvDateTime, tvLocation, tvDescription, tvAdminEventLabel;
         Button btnRSVP;
         View btnViewAttendees;
 
@@ -101,6 +121,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             tvDateTime = itemView.findViewById(R.id.tvEventDateTime);
             tvLocation = itemView.findViewById(R.id.tvLocation);
             tvDescription = itemView.findViewById(R.id.tvEventDescription);
+            tvAdminEventLabel = itemView.findViewById(R.id.tvRsvpCount); // reuse this slot
             btnRSVP = itemView.findViewById(R.id.btnRSVP);
             btnViewAttendees = itemView.findViewById(R.id.btnViewAttendees);
         }

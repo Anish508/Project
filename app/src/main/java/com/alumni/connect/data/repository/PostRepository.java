@@ -103,4 +103,48 @@ public class PostRepository {
 
         return result;
     }
+
+    // ==================== CHAT (uses posts table with post_type = "chat_<requestId>") ====================
+
+    /**
+     * Fetch all chat messages for a mentorship session.
+     * @param requestId the mentorship_request id
+     */
+    public LiveData<Resource<List<Post>>> getChatMessages(String requestId) {
+        MutableLiveData<Resource<List<Post>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        String chatType = "eq.chat_" + requestId;
+
+        dbService.getChatMessages(chatType).enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.setValue(Resource.success(response.body()));
+                } else {
+                    result.setValue(Resource.error("Failed to load messages", null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                result.setValue(Resource.error("Network error: " + t.getMessage(), null));
+            }
+        });
+
+        return result;
+    }
+
+    /**
+     * Send a chat message in a mentorship session.
+     */
+    public LiveData<Resource<Post>> sendChatMessage(String requestId, String senderId, String senderName, String messageText) {
+        Post msg = new Post();
+        msg.setPostType("chat_" + requestId);
+        msg.setAuthorId(senderId);
+        msg.setTitle(senderName);  // title stores sender's display name
+        msg.setContent(messageText);
+        return createPost(msg);
+    }
 }
+

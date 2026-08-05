@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- item_chat_message.xml — supports sent (right) and received (left) messages via visibility -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp">
+
+    <!-- RECEIVED (left side) -->
+    <LinearLayout
+        android:id="@+id/llReceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:orientation="vertical"
+        android:maxWidth="280dp">
+
+        <TextView
+            android:id="@+id/tvReceivedSender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            android:paddingBottom="2dp"
+            android:paddingStart="4dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Avatar -->
+            <TextView
+                android:id="@+id/tvReceivedAvatar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_avatar_circle"
+                android:layout_marginEnd="6dp"
+                android:text="A" />
+
+            <TextView
+                android:id="@+id/tvReceivedMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_bubble_received"
+                android:padding="10dp"
+                android:textSize="14sp"
+                android:textColor="#1E293B" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvReceivedTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:textColor="@color/on_surface_variant"
+            android:paddingTop="2dp"
+            android:paddingStart="38dp" />
+    </LinearLayout>
+
+    <!-- SENT (right side) -->
+    <LinearLayout
+        android:id="@+id/llSent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:orientation="vertical"
+        android:maxWidth="280dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvSentMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_bubble_sent"
+            android:padding="10dp"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/tvSentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textSize="10sp"
+            android:textColor="@color/on_surface_variant"
+            android:paddingTop="2dp" />
+    </LinearLayout>
+</FrameLayout>

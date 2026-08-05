@@ -6,14 +6,61 @@
     android:padding="20dp"
     android:background="@color/surface">
 
-    <TextView
-        android:id="@+id/tvEventAttendeesTitle"
+    <!-- Title Row: Event name + count badge -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Registered Event RSVPs / Attendees"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/on_surface" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvEventAttendeesTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Registered Attendees"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/on_surface" />
+
+            <TextView
+                android:id="@+id/tvEventAttendeesSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="View who registered for this event"
+                android:textSize="12sp"
+                android:textColor="@color/on_surface_variant"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- RSVP Count Badge -->
+        <TextView
+            android:id="@+id/tvRsvpCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:text="0 RSVPs"
+            android:textColor="@color/primary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- Loading indicator -->
+    <ProgressBar
+        android:id="@+id/pbAttendeesLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/tvEmptyAttendees"
@@ -29,7 +76,8 @@
         android:id="@+id/rvEventAttendees"
         android:layout_width="match_parent"
         android:layout_height="320dp"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="12dp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btnCloseAttendees"

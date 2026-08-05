@@ -51,7 +51,17 @@ public class ViewAttendeesDialogFragment extends BottomSheetDialogFragment {
         }
 
         repository = new EventRepository(requireContext());
-        binding.tvEventAttendeesTitle.setText("Attendees for " + event.getTitle());
+
+        // Set event title
+        String eventTitle = event.getTitle() != null ? event.getTitle() : "Event";
+        binding.tvEventAttendeesTitle.setText(eventTitle);
+        binding.tvEventAttendeesSubtitle.setText("People registered for this event");
+
+        // Initial state: loading
+        binding.pbAttendeesLoading.setVisibility(View.VISIBLE);
+        binding.tvEmptyAttendees.setVisibility(View.GONE);
+        binding.rvEventAttendees.setVisibility(View.GONE);
+        binding.tvRsvpCount.setText("Loading…");
 
         adapter = new AttendeeAdapter();
         binding.rvEventAttendees.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -64,16 +74,31 @@ public class ViewAttendeesDialogFragment extends BottomSheetDialogFragment {
 
     private void loadAttendees() {
         if (event.getId() == null || event.getId().isEmpty()) {
+            binding.pbAttendeesLoading.setVisibility(View.GONE);
             binding.tvEmptyAttendees.setVisibility(View.VISIBLE);
+            binding.tvRsvpCount.setText("0 RSVPs");
             return;
         }
 
         repository.getEventRegistrations(event.getId()).observe(getViewLifecycleOwner(), resource -> {
+            if (resource.status == Resource.Status.LOADING) {
+                binding.pbAttendeesLoading.setVisibility(View.VISIBLE);
+                binding.tvRsvpCount.setText("Loading…");
+                return;
+            }
+
+            binding.pbAttendeesLoading.setVisibility(View.GONE);
+
             if (resource.status == Resource.Status.SUCCESS && resource.data != null && !resource.data.isEmpty()) {
+                int count = resource.data.size();
+                binding.tvRsvpCount.setText(count + (count == 1 ? " RSVP" : " RSVPs"));
                 binding.tvEmptyAttendees.setVisibility(View.GONE);
+                binding.rvEventAttendees.setVisibility(View.VISIBLE);
                 adapter.setRegistrations(resource.data);
             } else {
+                binding.tvRsvpCount.setText("0 RSVPs");
                 binding.tvEmptyAttendees.setVisibility(View.VISIBLE);
+                binding.rvEventAttendees.setVisibility(View.GONE);
                 adapter.setRegistrations(new ArrayList<>());
             }
         });
@@ -100,7 +125,7 @@ public class ViewAttendeesDialogFragment extends BottomSheetDialogFragment {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             EventRegistration reg = list.get(position);
-            holder.bind(reg);
+            holder.bind(reg, position + 1);
         }
 
         @Override
@@ -120,19 +145,39 @@ public class ViewAttendeesDialogFragment extends BottomSheetDialogFragment {
                 tvTime = itemView.findViewById(R.id.tvAttendeeTime);
             }
 
-            void bind(EventRegistration reg) {
+            void bind(EventRegistration reg, int index) {
                 User u = reg.getUser();
-                String name = u != null && u.getFullName() != null ? u.getFullName() : "Registered Student";
-                String email = u != null && u.getEmail() != null ? u.getEmail() : "user_id: " + reg.getUserId();
-                String role = u != null && u.getRole() != null ? u.getRole().toUpperCase() : "ATTENDEE";
+
+                // Name: populated via users(*) join; fallback to "Attendee #N"
+                String name = (u != null && u.getFullName() != null && !u.getFullName().isEmpty())
+                        ? u.getFullName()
+                        : "Attendee #" + index;
+
+                // Email
+                String email = (u != null && u.getEmail() != null && !u.getEmail().isEmpty())
+                        ? u.getEmail()
+                        : "Email not available";
+
+                // Role with capital first letter
+                String rawRole = (u != null && u.getRole() != null && !u.getRole().isEmpty())
+                        ? u.getRole()
+                        : "attendee";
+                String role = rawRole.substring(0, 1).toUpperCase() + rawRole.substring(1);
 
                 tvName.setText(name);
                 tvEmail.setText(email);
                 tvRole.setText(role);
-                tvAvatar.setText(name.length() > 0 ? name.substring(0, 1).toUpperCase() : "A");
 
-                String time = reg.getCreatedAt() != null ? reg.getCreatedAt() : "Recently";
-                tvTime.setText("RSVP Timestamp: " + time);
+                // Avatar initial from name
+                tvAvatar.setText(name.substring(0, 1).toUpperCase());
+
+                // Format RSVP date (YYYY-MM-DD from ISO timestamp)
+                String rawTime = reg.getCreatedAt();
+                if (rawTime != null && rawTime.length() >= 10) {
+                    tvTime.setText("Registered: " + rawTime.substring(0, 10));
+                } else {
+                    tvTime.setText("Registered: Recently");
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.alumni.connect.R;
 import com.alumni.connect.data.local.SessionManager;
 import com.alumni.connect.data.model.Event;
 import com.alumni.connect.data.model.MentorshipRequest;
@@ -100,9 +101,9 @@ public class MentorshipFragment extends Fragment {
 
             @Override
             public void onConnect(MentorshipRequest request) {
+                // Legacy email connect (kept for fallback)
                 String targetEmail = "";
                 String targetName = "Member";
-
                 if (request.getMentor() != null && !sessionManager.getUserId().equals(request.getMentorId())) {
                     targetEmail = request.getMentor().getEmail();
                     targetName = request.getMentor().getFullName();
@@ -110,30 +111,52 @@ public class MentorshipFragment extends Fragment {
                     targetEmail = request.getMentee().getEmail();
                     targetName = request.getMentee().getFullName();
                 }
-
-                if (targetEmail == null || targetEmail.isEmpty()) {
-                    targetEmail = "mentor@alumni.edu";
-                }
-
+                if (targetEmail == null || targetEmail.isEmpty()) targetEmail = "mentor@alumni.edu";
                 final String finalEmail = targetEmail;
                 final String finalName = targetName;
-
                 new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                         .setTitle("Connect with " + finalName)
-                        .setMessage("Start your 1-on-1 mentorship session.\nEmail: " + finalEmail + "\nTopic: " + request.getTopic())
+                        .setMessage("Email: " + finalEmail + "\nTopic: " + request.getTopic())
                         .setPositiveButton("Send Email", (dialog, which) -> {
                             android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_SENDTO);
                             intent.setData(android.net.Uri.parse("mailto:" + finalEmail));
                             intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Mentorship Session: " + request.getTopic());
                             intent.putExtra(android.content.Intent.EXTRA_TEXT, "Hi " + finalName + ",\n\nI am reaching out regarding our mentorship session on '" + request.getTopic() + "'.");
-                            try {
-                                startActivity(intent);
-                            } catch (Exception e) {
-                                Toast.makeText(requireContext(), "No email application found.", Toast.LENGTH_SHORT).show();
-                            }
+                            try { startActivity(intent); } catch (Exception e) { android.widget.Toast.makeText(requireContext(), "No email app found.", android.widget.Toast.LENGTH_SHORT).show(); }
                         })
-                        .setNegativeButton("Cancel", null)
-                        .show();
+                        .setNegativeButton("Cancel", null).show();
+            }
+
+            @Override
+            public void onOpenChat(MentorshipRequest request) {
+                // Determine the other participant's name for the chat header
+                String otherName;
+                if (sessionManager.getUserId().equals(request.getMentorId())) {
+                    // Current user is the mentor, so show mentee name
+                    otherName = request.getMentee() != null ? request.getMentee().getFullName() : "Mentee";
+                } else {
+                    // Current user is the mentee, so show mentor name
+                    otherName = request.getMentor() != null ? request.getMentor().getFullName() : "Mentor";
+                }
+                String topic = request.getTopic() != null ? request.getTopic() : "Mentorship";
+
+                Bundle args = new Bundle();
+                args.putString("request_id", request.getId());
+                args.putString("request_topic", topic);
+                args.putString("other_name", otherName);
+
+                try {
+                    androidx.navigation.Navigation.findNavController(requireView()).navigate(R.id.nav_chat, args);
+                } catch (Exception e) {
+                    ChatFragment chatFragment = ChatFragment.newInstance(request.getId(), topic, otherName);
+                    requireActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right,
+                                    android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                            .replace(R.id.navHostFragment, chatFragment)
+                            .addToBackStack("chat")
+                            .commit();
+                }
             }
         };
     }
@@ -149,7 +172,9 @@ public class MentorshipFragment extends Fragment {
 
     private void loadEvents() {
         com.alumni.connect.data.repository.EventRepository eventRepo = new com.alumni.connect.data.repository.EventRepository(requireContext());
-        boolean canViewAttendees = com.alumni.connect.util.Constants.ROLE_ADMIN.equals(sessionManager.getRole()) || com.alumni.connect.util.Constants.ROLE_ALUMNI.equals(sessionManager.getRole());
+        boolean isAdmin = com.alumni.connect.util.Constants.ROLE_ADMIN.equals(sessionManager.getRole());
+        // Admin and Alumni can view attendees, but only non-admin can RSVP
+        boolean canViewAttendees = isAdmin || com.alumni.connect.util.Constants.ROLE_ALUMNI.equals(sessionManager.getRole());
 
         eventRepo.getUserEventRegistrations(sessionManager.getUserId()).observe(getViewLifecycleOwner(), regRes -> {
             java.util.Set<String> registeredIds = new java.util.HashSet<>();
@@ -172,7 +197,7 @@ public class MentorshipFragment extends Fragment {
                     @Override
                     public void onRsvp(Event event) {
                         if (event.getId() == null || event.getId().isEmpty()) {
-                            Toast.makeText(requireContext(), "RSVP confirmed for " + event.getTitle(), Toast.LENGTH_SHORT).show();
+                            android.widget.Toast.makeText(requireContext(), "RSVP confirmed for " + event.getTitle(), android.widget.Toast.LENGTH_SHORT).show();
                             return;
                         }
                         com.alumni.connect.data.model.EventRegistration reg = new com.alumni.connect.data.model.EventRegistration();
@@ -181,10 +206,10 @@ public class MentorshipFragment extends Fragment {
 
                         eventRepo.registerForEvent(reg).observe(getViewLifecycleOwner(), res -> {
                             if (res.status == Resource.Status.SUCCESS) {
-                                Toast.makeText(requireContext(), "RSVP Confirmed for " + event.getTitle() + "!", Toast.LENGTH_SHORT).show();
+                                android.widget.Toast.makeText(requireContext(), "RSVP Confirmed for " + event.getTitle() + "!", android.widget.Toast.LENGTH_SHORT).show();
                                 loadEvents();
                             } else if (res.status == Resource.Status.ERROR) {
-                                Toast.makeText(requireContext(), "RSVP Error: " + res.message, Toast.LENGTH_SHORT).show();
+                                android.widget.Toast.makeText(requireContext(), "RSVP Error: " + res.message, android.widget.Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -194,7 +219,7 @@ public class MentorshipFragment extends Fragment {
                         com.alumni.connect.ui.events.ViewAttendeesDialogFragment.newInstance(event)
                                 .show(getChildFragmentManager(), "ViewAttendeesDialog");
                     }
-                });
+                }, isAdmin); // Pass isAdmin so admin cannot RSVP
             });
         });
     }

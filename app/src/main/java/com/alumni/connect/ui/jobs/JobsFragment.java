@@ -93,14 +93,16 @@ public class JobsFragment extends Fragment {
 
     private void loadJobs() {
         boolean canViewApps = Constants.ROLE_ADMIN.equals(sessionManager.getRole()) || Constants.ROLE_ALUMNI.equals(sessionManager.getRole());
+        String currentUserId = sessionManager.getUserId();
+        String userRole = sessionManager.getRole();
         viewModel.getJobs().observe(getViewLifecycleOwner(), resource -> {
             binding.swipeRefresh.setRefreshing(resource.status == Resource.Status.LOADING);
             if (resource.status == Resource.Status.SUCCESS && resource.data != null && !resource.data.isEmpty()) {
                 allJobs = filterJobsByAudience(resource.data);
-                adapter.setJobs(allJobs, canViewApps, createJobClickListener());
+                adapter.setJobs(allJobs, canViewApps, createJobClickListener(), currentUserId, userRole);
             } else if (resource.status == Resource.Status.ERROR || allJobs.isEmpty()) {
                 allJobs = filterJobsByAudience(createMockJobs());
-                adapter.setJobs(allJobs, canViewApps, createJobClickListener());
+                adapter.setJobs(allJobs, canViewApps, createJobClickListener(), currentUserId, userRole);
             }
         });
     }
@@ -146,10 +148,12 @@ public class JobsFragment extends Fragment {
 
     private void filterJobs(String query) {
         boolean canViewApps = Constants.ROLE_ADMIN.equals(sessionManager.getRole()) || Constants.ROLE_ALUMNI.equals(sessionManager.getRole());
+        String currentUserId = sessionManager.getUserId();
+        String userRole = sessionManager.getRole();
         List<Job> audienceJobs = filterJobsByAudience(allJobs);
 
         if (query == null || query.trim().isEmpty()) {
-            adapter.setJobs(audienceJobs, canViewApps, createJobClickListener());
+            adapter.setJobs(audienceJobs, canViewApps, createJobClickListener(), currentUserId, userRole);
             return;
         }
         String lower = query.toLowerCase();
@@ -163,7 +167,7 @@ public class JobsFragment extends Fragment {
                 filtered.add(j);
             }
         }
-        adapter.setJobs(filtered, canViewApps, createJobClickListener());
+        adapter.setJobs(filtered, canViewApps, createJobClickListener(), currentUserId, userRole);
     }
 
     private List<Job> createMockJobs() {

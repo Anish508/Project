@@ -25,15 +25,23 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
     private List<Job> jobs = new ArrayList<>();
     private OnJobClickListener listener;
     private boolean isOwnerOrAdmin = false;
+    private String currentUserId = "";
+    private String userRole = "";
 
     public void setJobs(List<Job> jobs, OnJobClickListener listener) {
         setJobs(jobs, false, listener);
     }
 
     public void setJobs(List<Job> jobs, boolean isOwnerOrAdmin, OnJobClickListener listener) {
+        setJobs(jobs, isOwnerOrAdmin, listener, "", "");
+    }
+
+    public void setJobs(List<Job> jobs, boolean isOwnerOrAdmin, OnJobClickListener listener, String currentUserId, String userRole) {
         this.jobs = jobs != null ? jobs : new ArrayList<>();
         this.isOwnerOrAdmin = isOwnerOrAdmin;
         this.listener = listener;
+        this.currentUserId = currentUserId != null ? currentUserId : "";
+        this.userRole = userRole != null ? userRole : "";
         notifyDataSetChanged();
     }
 
@@ -53,6 +61,39 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
         holder.tvSalary.setText(job.getSalaryRange() != null ? "Salary: " + job.getSalaryRange() : "Competitive Salary");
         holder.tvDescription.setText(job.getDescription());
 
+        // Determine if this is the current user's own job posting
+        boolean isOwnJob = !currentUserId.isEmpty()
+                && job.getPostedBy() != null
+                && job.getPostedBy().equals(currentUserId);
+
+        // Admin users cannot apply to any job
+        boolean isAdmin = "admin".equalsIgnoreCase(userRole);
+
+        if (isAdmin) {
+            // Admin: hide apply, show "Admin View" tag
+            holder.btnApply.setVisibility(View.GONE);
+            if (holder.tvOwnJobLabel != null) {
+                holder.tvOwnJobLabel.setVisibility(View.VISIBLE);
+                holder.tvOwnJobLabel.setText("🔒 Admin View");
+            }
+        } else if (isOwnJob) {
+            // Alumni viewing their own posted job
+            holder.btnApply.setVisibility(View.GONE);
+            if (holder.tvOwnJobLabel != null) {
+                holder.tvOwnJobLabel.setVisibility(View.VISIBLE);
+                holder.tvOwnJobLabel.setText("📌 Your Listing");
+            }
+        } else {
+            holder.btnApply.setVisibility(View.VISIBLE);
+            if (holder.tvOwnJobLabel != null) {
+                holder.tvOwnJobLabel.setVisibility(View.GONE);
+            }
+            holder.btnApply.setOnClickListener(v -> {
+                if (listener != null) listener.onApply(job);
+            });
+        }
+
+        // View Applications — shown to Alumni (own jobs) + Admin
         if (isOwnerOrAdmin) {
             holder.btnViewApplications.setVisibility(View.VISIBLE);
             holder.btnViewApplications.setOnClickListener(v -> {
@@ -62,14 +103,16 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             holder.btnViewApplications.setVisibility(View.GONE);
         }
 
-        holder.btnApply.setOnClickListener(v -> {
-            if (listener != null) listener.onApply(job);
-        });
-
         if (holder.btnAiMatch != null) {
-            holder.btnAiMatch.setOnClickListener(v -> {
-                if (listener != null) listener.onAiMatch(job);
-            });
+            // AI Match only shown to non-admin users for jobs they can apply to
+            if (isAdmin) {
+                holder.btnAiMatch.setVisibility(View.GONE);
+            } else {
+                holder.btnAiMatch.setVisibility(View.VISIBLE);
+                holder.btnAiMatch.setOnClickListener(v -> {
+                    if (listener != null) listener.onAiMatch(job);
+                });
+            }
         }
     }
 
@@ -79,7 +122,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
     }
 
     static class JobViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvCompanyLocation, tvJobType, tvSalary, tvDescription;
+        TextView tvTitle, tvCompanyLocation, tvJobType, tvSalary, tvDescription, tvOwnJobLabel;
         Button btnApply, btnViewApplications, btnAiMatch;
 
         JobViewHolder(@NonNull View itemView) {
@@ -89,6 +132,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             tvJobType = itemView.findViewById(R.id.tvJobTypeChip);
             tvSalary = itemView.findViewById(R.id.tvSalary);
             tvDescription = itemView.findViewById(R.id.tvDescription);
+            tvOwnJobLabel = itemView.findViewById(R.id.tvOwnJobLabel);
             btnApply = itemView.findViewById(R.id.btnApply);
             btnViewApplications = itemView.findViewById(R.id.btnViewApplications);
             btnAiMatch = itemView.findViewById(R.id.btnAiMatch);

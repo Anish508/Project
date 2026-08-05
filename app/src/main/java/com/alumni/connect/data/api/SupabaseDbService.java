@@ -130,9 +130,17 @@ public interface SupabaseDbService {
     @PATCH("rest/v1/mentorship_requests")
     Call<List<MentorshipRequest>> updateMentorshipStatus(@Query("id") String idQuery, @Body Map<String, Object> body);
 
+    // All mentorship requests — for admin count KPI
+    @GET("rest/v1/mentorship_requests?select=id")
+    Call<List<MentorshipRequest>> getAllMentorshipRequests();
+
     // ==================== POSTS ====================
     @GET("rest/v1/posts?order=created_at.desc")
     Call<List<Post>> getPosts();
+
+    // Chat messages are stored as posts with post_type = "chat_<requestId>"
+    @GET("rest/v1/posts?order=created_at.asc")
+    Call<List<Post>> getChatMessages(@Query("post_type") String postTypeQuery);
 
     @POST("rest/v1/posts")
     Call<List<Post>> createPost(@Body Post post);
@@ -170,11 +178,16 @@ public interface SupabaseDbService {
     @POST("rest/v1/event_registrations")
     Call<List<EventRegistration>> registerForEvent(@Body EventRegistration registration);
 
-    @GET("rest/v1/event_registrations")
+    // Joins users(*) so EventRegistration.getUser() is populated with full_name, email, role
+    @GET("rest/v1/event_registrations?select=*,users(*)&order=created_at.asc")
     Call<List<EventRegistration>> getEventRegistrations(@Query("event_id") String eventIdQuery);
 
-    @GET("rest/v1/event_registrations")
+    @GET("rest/v1/event_registrations?select=*,users(*)&order=created_at.desc")
     Call<List<EventRegistration>> getUserEventRegistrations(@Query("user_id") String userIdQuery);
+
+    // Used by admin dashboard for total RSVP count
+    @GET("rest/v1/event_registrations?select=id")
+    Call<List<EventRegistration>> getAllEventRegistrations();
 
     // ==================== ANNOUNCEMENTS ====================
     @POST("rest/v1/announcements")

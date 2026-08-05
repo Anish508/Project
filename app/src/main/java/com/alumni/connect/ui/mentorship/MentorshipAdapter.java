@@ -19,7 +19,8 @@ public class MentorshipAdapter extends RecyclerView.Adapter<MentorshipAdapter.Vi
     public interface OnMentorshipActionListener {
         void onAccept(MentorshipRequest request);
         void onReject(MentorshipRequest request);
-        void onConnect(MentorshipRequest request);
+        void onConnect(MentorshipRequest request);  // legacy email connect
+        void onOpenChat(MentorshipRequest request); // NEW in-app chat
     }
 
     private List<MentorshipRequest> requests = new ArrayList<>();
@@ -43,7 +44,22 @@ public class MentorshipAdapter extends RecyclerView.Adapter<MentorshipAdapter.Vi
         MentorshipRequest request = requests.get(position);
         holder.tvTopic.setText(request.getTopic());
         holder.tvMessage.setText(request.getMessage());
-        holder.tvStatus.setText(request.getStatus() != null ? request.getStatus().toUpperCase() : "PENDING");
+
+        String rawStatus = request.getStatus() != null ? request.getStatus() : "pending";
+        holder.tvStatus.setText(rawStatus.toUpperCase());
+
+        // Status chip color
+        switch (rawStatus.toLowerCase()) {
+            case "accepted":
+                holder.tvStatus.setTextColor(0xFF16A34A); // green
+                break;
+            case "rejected":
+                holder.tvStatus.setTextColor(0xFFDC2626); // red
+                break;
+            default:
+                holder.tvStatus.setTextColor(0xFFF59E0B); // amber/warning
+                break;
+        }
 
         String mentorName = request.getMentor() != null ? request.getMentor().getFullName() : "Mentor";
         String menteeName = request.getMentee() != null ? request.getMentee().getFullName() : "Mentee";
@@ -54,15 +70,19 @@ public class MentorshipAdapter extends RecyclerView.Adapter<MentorshipAdapter.Vi
         if ("accepted".equalsIgnoreCase(request.getStatus())) {
             holder.btnAccept.setVisibility(View.GONE);
             holder.btnReject.setVisibility(View.GONE);
-            holder.btnConnect.setVisibility(View.VISIBLE);
+            holder.btnConnect.setVisibility(View.GONE);
+            holder.btnOpenChat.setVisibility(View.VISIBLE);
         } else if ("rejected".equalsIgnoreCase(request.getStatus())) {
             holder.btnAccept.setVisibility(View.GONE);
             holder.btnReject.setVisibility(View.GONE);
             holder.btnConnect.setVisibility(View.GONE);
+            holder.btnOpenChat.setVisibility(View.GONE);
         } else {
+            // pending
             holder.btnAccept.setVisibility(View.VISIBLE);
             holder.btnReject.setVisibility(View.VISIBLE);
             holder.btnConnect.setVisibility(View.GONE);
+            holder.btnOpenChat.setVisibility(View.GONE);
         }
 
         holder.btnAccept.setOnClickListener(v -> {
@@ -76,6 +96,10 @@ public class MentorshipAdapter extends RecyclerView.Adapter<MentorshipAdapter.Vi
         holder.btnConnect.setOnClickListener(v -> {
             if (listener != null) listener.onConnect(request);
         });
+
+        holder.btnOpenChat.setOnClickListener(v -> {
+            if (listener != null) listener.onOpenChat(request);
+        });
     }
 
     @Override
@@ -85,7 +109,7 @@ public class MentorshipAdapter extends RecyclerView.Adapter<MentorshipAdapter.Vi
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTopic, tvRequesterInfo, tvMessage, tvStatus;
-        Button btnAccept, btnReject, btnConnect;
+        Button btnAccept, btnReject, btnConnect, btnOpenChat;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -96,6 +120,7 @@ public class MentorshipAdapter extends RecyclerView.Adapter<MentorshipAdapter.Vi
             btnAccept = itemView.findViewById(R.id.btnAccept);
             btnReject = itemView.findViewById(R.id.btnReject);
             btnConnect = itemView.findViewById(R.id.btnConnect);
+            btnOpenChat = itemView.findViewById(R.id.btnOpenChat);
         }
     }
 }

@@ -32,27 +32,31 @@ public class AdminHomeFragment extends Fragment {
         adminRepository = new AdminRepository(requireContext());
 
         // Quick action buttons wiring
-        binding.btnManageUsers.setOnClickListener(v -> 
+        binding.btnManageUsers.setOnClickListener(v ->
             Navigation.findNavController(requireView()).navigate(R.id.nav_user_management)
         );
 
-        binding.btnModerateContent.setOnClickListener(v -> 
+        binding.btnModerateContent.setOnClickListener(v ->
             Navigation.findNavController(requireView()).navigate(R.id.nav_content_moderation)
         );
 
-        binding.btnCreateJob.setOnClickListener(v -> 
+        binding.btnCreateJob.setOnClickListener(v ->
             Navigation.findNavController(requireView()).navigate(R.id.nav_create_job)
         );
 
-        binding.btnSendAnnouncement.setOnClickListener(v -> 
+        binding.btnSendAnnouncement.setOnClickListener(v ->
             Navigation.findNavController(requireView()).navigate(R.id.nav_announcement)
+        );
+
+        binding.btnManageEvents.setOnClickListener(v ->
+            Navigation.findNavController(requireView()).navigate(R.id.nav_event_management)
         );
 
         loadDashboardKPIs();
     }
 
     private void loadDashboardKPIs() {
-        // Fetch users to count totals
+        // Users KPIs: Total, Students, Alumni
         adminRepository.getAllUsers().observe(getViewLifecycleOwner(), resource -> {
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
                 int total = resource.data.size();
@@ -72,7 +76,7 @@ public class AdminHomeFragment extends Fragment {
             }
         });
 
-        // Fetch jobs to count
+        // Jobs KPI
         adminRepository.getAllJobs().observe(getViewLifecycleOwner(), resource -> {
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
                 binding.tvTotalJobs.setText(String.valueOf(resource.data.size()));
@@ -81,7 +85,7 @@ public class AdminHomeFragment extends Fragment {
             }
         });
 
-        // Fetch events to count
+        // Events KPI
         adminRepository.getAllEvents().observe(getViewLifecycleOwner(), resource -> {
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
                 binding.tvTotalEvents.setText(String.valueOf(resource.data.size()));
@@ -90,12 +94,48 @@ public class AdminHomeFragment extends Fragment {
             }
         });
 
-        // Fetch posts to count
+        // Posts KPI
         adminRepository.getAllPosts().observe(getViewLifecycleOwner(), resource -> {
             if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
                 binding.tvTotalPosts.setText(String.valueOf(resource.data.size()));
             } else {
                 binding.tvTotalPosts.setText("0");
+            }
+        });
+
+        // Total RSVPs KPI (new)
+        adminRepository.getTotalRsvpCount().observe(getViewLifecycleOwner(), resource -> {
+            if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                binding.tvTotalRsvps.setText(String.valueOf(resource.data));
+            } else {
+                binding.tvTotalRsvps.setText("0");
+            }
+        });
+
+        // Announcements KPI (new)
+        adminRepository.getAnnouncements().observe(getViewLifecycleOwner(), resource -> {
+            if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                binding.tvTotalAnnouncements.setText(String.valueOf(resource.data.size()));
+            } else {
+                binding.tvTotalAnnouncements.setText("0");
+            }
+        });
+
+        // Job Applications KPI (new)
+        adminRepository.getTotalApplicationsCount().observe(getViewLifecycleOwner(), resource -> {
+            if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                binding.tvTotalApplications.setText(String.valueOf(resource.data));
+            } else {
+                binding.tvTotalApplications.setText("0");
+            }
+        });
+
+        // Mentorships KPI (new)
+        adminRepository.getTotalMentorshipCount().observe(getViewLifecycleOwner(), resource -> {
+            if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                binding.tvTotalMentorships.setText(String.valueOf(resource.data));
+            } else {
+                binding.tvTotalMentorships.setText("0");
             }
         });
     }
